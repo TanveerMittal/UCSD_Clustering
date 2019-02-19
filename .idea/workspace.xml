@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="177f91eb-b890-42dd-ae46-2169199172b9" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data Wrangling.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Data Wrangling.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/la_jolla.py" beforeDir="false" afterPath="$PROJECT_DIR$/la_jolla.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/visualize/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/visualize/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/visualize/voronoi.json" beforeDir="false" afterPath="$PROJECT_DIR$/visualize/voronoi.json" afterDir="false" />
-    </list>
+    <list default="true" id="177f91eb-b890-42dd-ae46-2169199172b9" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -59,7 +51,7 @@
         </entry>
       </file>
       <file leaf-file-name="index.html" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/index.html">
+        <entry file="file://$PROJECT_DIR$/docs/index.html">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="153">
               <caret line="9" column="7" lean-forward="true" selection-start-line="9" selection-start-column="7" selection-end-line="9" selection-end-column="7" />
@@ -191,7 +183,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -395,7 +386,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/index.html">
+    <entry file="file://$PROJECT_DIR$/docs/index.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="153">
           <caret line="9" column="7" lean-forward="true" selection-start-line="9" selection-start-column="7" selection-end-line="9" selection-end-column="7" />
