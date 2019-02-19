@@ -38,7 +38,7 @@ base_url = 'http://localhost:{0}/visualize/'.format(port)
 def load_visualization(url):
     """Load the visualization located at URL."""
     if not check_port():
-        print('Address already in use! Check if recommend.py is running in a separate terminal.')
+        print('Address already in use! Check if the visualization is running in a separate terminal.')
         return
     server = start_threaded_server()
     webbrowser.open_new(base_url + url)
