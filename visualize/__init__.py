@@ -2,54 +2,28 @@ import http.server
 import json
 import webbrowser
 import socket
+from utils import distance
+import threading
 
-"""
-def draw_map(centroids, places):
-    ""Write a JSON file containing inputs and load a visualization.
 
-    Arguments:
-    centroids -- A sequence of positions
-    restaurants -- A sequence of restaurants
-    ratings -- A dictionary from restaurant names to ratings
-    ""
-    data = []
-    locations = set()
-    for restaurant in restaurants:
-        p = tuple(restaurant_location(restaurant))
-        cluster = min(enumerate(centroids), key=lambda v: distance(p, v[1]))[0]
-        name = restaurant_name(restaurant)
-        rating = ratings[name]
-        if p not in locations:
-            data.append({
-                'x': p[0],
-                'y': p[1],
-                'weight': rating,
-                'name': name,
-                'cluster': cluster,
-            })
-            locations.add(p)
-    with open('visualize/voronoi.json', 'w') as f:
-        json.dump(data, f)
-    load_visualization('voronoi.html')
-"""
-
-def draw_map(places):
+def cluster_map(places, centroids):
     """Write a JSON file containing inputs and load a visualization.
 
     Arguments:
+    places -- A sequence of places
     centroids -- A sequence of positions
-    restaurants -- A sequence of restaurants
-    ratings -- A dictionary from restaurant names to ratings
     """
     data = []
     locations = set()
-    for place in places:
-        p = tuple(place[1])
+    for place in list(places.items()):
+        p = (place[1][0], place[1][1])
+        cluster = min(enumerate(centroids), key=lambda v: distance(p, v[1]))[0]
         if p not in locations:
             data.append({
                 'x': p[0],
                 'y': p[1],
-                'name': place[0]
+                'name': place[0],
+                'cluster': cluster,
             })
             locations.add(p)
     with open('visualize/voronoi.json', 'w') as f:
@@ -97,7 +71,7 @@ def start_server():
     finally:
         httpd.server_close()
 
-import threading
+
 def start_threaded_server():
     thread = threading.Thread(target=start_server)
     thread.daemon = True
