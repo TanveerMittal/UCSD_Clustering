@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>raw-k-means</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>campus_clustering</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 <style type="text/css">
@@ -11778,8 +11778,9 @@ div#notebook {
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span>
-<span class="kn">from</span> <span class="nn">utils</span> <span class="k">import</span> <span class="n">distance</span>
+<span class="kn">import</span> <span class="nn">googlemaps</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">utils</span> <span class="k">import</span> <span class="n">distance</span><span class="p">,</span> <span class="n">get_key</span>
 <span class="kn">from</span> <span class="nn">visualize</span> <span class="k">import</span> <span class="n">cluster_map</span>
 </pre></div>
 
@@ -11793,8 +11794,8 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;places.csv&quot;</span><span class="p">)</span>
-<span class="n">df</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">gmaps</span> <span class="o">=</span> <span class="n">googlemaps</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">get_key</span><span class="p">())</span>
+<span class="n">gmaps</span>
 </pre></div>
 
 </div>
@@ -11808,6 +11809,149 @@ div#notebook {
 <div class="output_area">
 
 <div class="prompt output_prompt">Out[2]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;googlemaps.client.Client at 0x14398ecac50&gt;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">types</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;art_gallery&quot;</span><span class="p">,</span> <span class="s2">&quot;atm&quot;</span><span class="p">,</span> <span class="s2">&quot;bakery&quot;</span><span class="p">,</span> <span class="s2">&quot;bank&quot;</span><span class="p">,</span> <span class="s2">&quot;bar&quot;</span><span class="p">,</span> <span class="s2">&quot;beauty_salon&quot;</span><span class="p">,</span> <span class="s2">&quot;bicycle_store&quot;</span><span class="p">,</span> <span class="s2">&quot;book_store&quot;</span><span class="p">,</span> <span class="s2">&quot;bus_station&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;cafe&quot;</span><span class="p">,</span> <span class="s2">&quot;campground&quot;</span><span class="p">,</span> <span class="s2">&quot;clothing_store&quot;</span><span class="p">,</span> <span class="s2">&quot;convenience_store&quot;</span><span class="p">,</span> <span class="s2">&quot;doctor&quot;</span><span class="p">,</span> <span class="s2">&quot;gym&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;hospital&quot;</span><span class="p">,</span> <span class="s2">&quot;laundry&quot;</span><span class="p">,</span> <span class="s2">&quot;library&quot;</span><span class="p">,</span> <span class="s2">&quot;liquor_store&quot;</span><span class="p">,</span> <span class="s2">&quot;local_government_office&quot;</span><span class="p">,</span> <span class="s2">&quot;lodging&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;museum&quot;</span><span class="p">,</span> <span class="s2">&quot;park&quot;</span><span class="p">,</span> <span class="s2">&quot;parking&quot;</span><span class="p">,</span> <span class="s2">&quot;pharmacy&quot;</span><span class="p">,</span> <span class="s2">&quot;physiotherapist&quot;</span><span class="p">,</span> <span class="s2">&quot;police&quot;</span><span class="p">,</span> <span class="s2">&quot;post_office&quot;</span><span class="p">,</span> <span class="s2">&quot;restaurant&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;school&quot;</span><span class="p">,</span> <span class="s2">&quot;stadium&quot;</span><span class="p">,</span> <span class="s2">&quot;storage&quot;</span><span class="p">,</span> <span class="s2">&quot;store&quot;</span><span class="p">,</span> <span class="s2">&quot;supermarket&quot;</span><span class="p">,</span> <span class="s2">&quot;transit_station&quot;</span><span class="p">,</span> <span class="s2">&quot;university&quot;</span><span class="p">]</span>
+
+<span class="k">def</span> <span class="nf">page_search</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="p">(</span><span class="mf">32.881439</span><span class="p">,</span><span class="o">-</span><span class="mf">117.237729</span><span class="p">),</span> <span class="n">rad</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">search</span> <span class="o">=</span> <span class="n">gmaps</span><span class="o">.</span><span class="n">places_nearby</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">loc</span><span class="p">,</span> <span class="n">rank_by</span><span class="o">=</span><span class="s2">&quot;distance&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">category</span><span class="p">)</span>
+    <span class="n">results</span> <span class="o">+=</span> <span class="n">search</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">]</span>
+    <span class="k">while</span> <span class="s2">&quot;next_page_token&quot;</span> <span class="ow">in</span> <span class="n">search</span><span class="p">:</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">search</span> <span class="o">=</span> <span class="n">gmaps</span><span class="o">.</span><span class="n">places_nearby</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">loc</span><span class="p">,</span> <span class="n">page_token</span><span class="o">=</span><span class="n">search</span><span class="p">[</span><span class="s2">&quot;next_page_token&quot;</span><span class="p">],</span> <span class="n">radius</span><span class="o">=</span><span class="n">rad</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">category</span><span class="p">)</span>
+        <span class="n">results</span> <span class="o">+=</span> <span class="n">search</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">]</span>       
+    <span class="k">return</span> <span class="n">results</span>
+
+<span class="n">places</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">types</span><span class="p">:</span>
+    <span class="n">places</span> <span class="o">+=</span> <span class="n">page_search</span><span class="p">(</span><span class="n">category</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
+    
+<span class="n">places</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[3]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>{&#39;geometry&#39;: {&#39;location&#39;: {&#39;lat&#39;: 32.8781369, &#39;lng&#39;: -117.2403332},
+  &#39;viewport&#39;: {&#39;northeast&#39;: {&#39;lat&#39;: 32.8794694802915,
+    &#39;lng&#39;: -117.2387766197085},
+   &#39;southwest&#39;: {&#39;lat&#39;: 32.8767715197085, &#39;lng&#39;: -117.2414745802915}}},
+ &#39;icon&#39;: &#39;https://maps.gstatic.com/mapfiles/place_api/icons/generic_business-71.png&#39;,
+ &#39;id&#39;: &#39;eb175531d46075e176a0c51290da00a24108de63&#39;,
+ &#39;name&#39;: &#39;Mandeville Annex Gallery&#39;,
+ &#39;place_id&#39;: &#39;ChIJweM8xMYG3IAR6GgXGxeFbVQ&#39;,
+ &#39;plus_code&#39;: {&#39;compound_code&#39;: &#39;VQH5+7V San Diego, California, United States&#39;,
+  &#39;global_code&#39;: &#39;8544VQH5+7V&#39;},
+ &#39;reference&#39;: &#39;ChIJweM8xMYG3IAR6GgXGxeFbVQ&#39;,
+ &#39;scope&#39;: &#39;GOOGLE&#39;,
+ &#39;types&#39;: [&#39;art_gallery&#39;, &#39;university&#39;, &#39;point_of_interest&#39;, &#39;establishment&#39;],
+ &#39;vicinity&#39;: &#39;San Diego&#39;}</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dct</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+<span class="k">for</span> <span class="n">place</span> <span class="ow">in</span> <span class="n">places</span><span class="p">:</span>
+    <span class="n">dct</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">place</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])</span>
+    <span class="n">dct</span><span class="p">[</span><span class="s2">&quot;latitude&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">place</span><span class="p">[</span><span class="s2">&quot;geometry&quot;</span><span class="p">][</span><span class="s2">&quot;location&quot;</span><span class="p">][</span><span class="s2">&quot;lat&quot;</span><span class="p">])</span>
+    <span class="n">dct</span><span class="p">[</span><span class="s2">&quot;longitude&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">place</span><span class="p">[</span><span class="s2">&quot;geometry&quot;</span><span class="p">][</span><span class="s2">&quot;location&quot;</span><span class="p">][</span><span class="s2">&quot;lng&quot;</span><span class="p">])</span>
+    
+<span class="p">{</span><span class="n">key</span><span class="p">:</span><span class="n">dct</span><span class="p">[</span><span class="n">key</span><span class="p">][:</span><span class="mi">3</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">dct</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[4]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>{&#39;name&#39;: [&#39;Mandeville Annex Gallery&#39;,
+  &#39;University Art Gallery (UAG)&#39;,
+  &#39;Crafts Center Grove Gallery&#39;],
+ &#39;latitude&#39;: [32.8781369, 32.87780120000001, 32.8756918],
+ &#39;longitude&#39;: [-117.2403332, -117.2407337, -117.2356496]}</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">dct</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[5]:</div>
 
 
 
@@ -11830,7 +11974,6 @@ div#notebook {
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>Unnamed: 0</th>
       <th>name</th>
       <th>latitude</th>
       <th>longitude</th>
@@ -11839,434 +11982,36 @@ div#notebook {
   <tbody>
     <tr>
       <th>0</th>
-      <td>0</td>
       <td>Mandeville Annex Gallery</td>
       <td>32.878137</td>
       <td>-117.240333</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>1</td>
       <td>University Art Gallery (UAG)</td>
       <td>32.877801</td>
       <td>-117.240734</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>2</td>
       <td>Crafts Center Grove Gallery</td>
       <td>32.875692</td>
       <td>-117.235650</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>3</td>
       <td>San Diego Center-Jewish Comm</td>
-      <td>32.875716</td>
+      <td>32.875717</td>
       <td>-117.215350</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>4</td>
       <td>Gotthelf Art Gallery</td>
       <td>32.875610</td>
       <td>-117.215004</td>
     </tr>
-    <tr>
-      <th>5</th>
-      <td>5</td>
-      <td>Waveriders Gallery</td>
-      <td>32.893304</td>
-      <td>-117.217545</td>
-    </tr>
-    <tr>
-      <th>6</th>
-      <td>6</td>
-      <td>Copia Art</td>
-      <td>32.869715</td>
-      <td>-117.212283</td>
-    </tr>
-    <tr>
-      <th>7</th>
-      <td>7</td>
-      <td>Symbolic Collection</td>
-      <td>32.910368</td>
-      <td>-117.229258</td>
-    </tr>
-    <tr>
-      <th>8</th>
-      <td>8</td>
-      <td>La Jolla Art Association</td>
-      <td>32.854042</td>
-      <td>-117.254919</td>
-    </tr>
-    <tr>
-      <th>9</th>
-      <td>9</td>
-      <td>La Playa Gallery</td>
-      <td>32.854059</td>
-      <td>-117.255008</td>
-    </tr>
-    <tr>
-      <th>10</th>
-      <td>10</td>
-      <td>Upwelling Fine Art Gallery</td>
-      <td>32.854217</td>
-      <td>-117.256759</td>
-    </tr>
-    <tr>
-      <th>11</th>
-      <td>11</td>
-      <td>San Diego Art Loft</td>
-      <td>32.914530</td>
-      <td>-117.233872</td>
-    </tr>
-    <tr>
-      <th>12</th>
-      <td>12</td>
-      <td>Simic Galleries</td>
-      <td>32.882473</td>
-      <td>-117.194889</td>
-    </tr>
-    <tr>
-      <th>13</th>
-      <td>13</td>
-      <td>Oriental Heritage Inc</td>
-      <td>32.901436</td>
-      <td>-117.200409</td>
-    </tr>
-    <tr>
-      <th>14</th>
-      <td>14</td>
-      <td>little bench art center</td>
-      <td>32.849116</td>
-      <td>-117.270666</td>
-    </tr>
-    <tr>
-      <th>15</th>
-      <td>15</td>
-      <td>The La Jolla Gallery</td>
-      <td>32.849285</td>
-      <td>-117.271042</td>
-    </tr>
-    <tr>
-      <th>16</th>
-      <td>16</td>
-      <td>Don Morris Art</td>
-      <td>32.849285</td>
-      <td>-117.271042</td>
-    </tr>
-    <tr>
-      <th>17</th>
-      <td>17</td>
-      <td>Africa and Beyond</td>
-      <td>32.849283</td>
-      <td>-117.271513</td>
-    </tr>
-    <tr>
-      <th>18</th>
-      <td>18</td>
-      <td>Prospect Place Fine Art</td>
-      <td>32.849483</td>
-      <td>-117.271791</td>
-    </tr>
-    <tr>
-      <th>19</th>
-      <td>19</td>
-      <td>Siamak Art Gallery</td>
-      <td>32.849437</td>
-      <td>-117.271732</td>
-    </tr>
-    <tr>
-      <th>20</th>
-      <td>20</td>
-      <td>Fiore Del Mare Art Gallery</td>
-      <td>32.848625</td>
-      <td>-117.270849</td>
-    </tr>
-    <tr>
-      <th>21</th>
-      <td>21</td>
-      <td>Derissi Design Studio &amp; Art</td>
-      <td>32.848900</td>
-      <td>-117.271770</td>
-    </tr>
-    <tr>
-      <th>22</th>
-      <td>22</td>
-      <td>T</td>
-      <td>32.838782</td>
-      <td>-117.248079</td>
-    </tr>
-    <tr>
-      <th>23</th>
-      <td>23</td>
-      <td>LIK Fine Art La Jolla</td>
-      <td>32.848825</td>
-      <td>-117.272242</td>
-    </tr>
-    <tr>
-      <th>24</th>
-      <td>24</td>
-      <td>Legends Gallery</td>
-      <td>32.848852</td>
-      <td>-117.272339</td>
-    </tr>
-    <tr>
-      <th>25</th>
-      <td>25</td>
-      <td>National Geographic | Fine Art Galleries</td>
-      <td>32.848645</td>
-      <td>-117.272145</td>
-    </tr>
-    <tr>
-      <th>26</th>
-      <td>26</td>
-      <td>Hallmark Galleries</td>
-      <td>32.848840</td>
-      <td>-117.273054</td>
-    </tr>
-    <tr>
-      <th>27</th>
-      <td>27</td>
-      <td>Salazar Contemporary Fine Art</td>
-      <td>32.848840</td>
-      <td>-117.273054</td>
-    </tr>
-    <tr>
-      <th>28</th>
-      <td>28</td>
-      <td>Ian Ely Gallery - La Jolla</td>
-      <td>32.848519</td>
-      <td>-117.272806</td>
-    </tr>
-    <tr>
-      <th>29</th>
-      <td>29</td>
-      <td>Contemporary Fine Arts Gallery</td>
-      <td>32.848054</td>
-      <td>-117.272485</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>1518</th>
-      <td>1518</td>
-      <td>Voigt Dr &amp; Scripps Memorial Hospital</td>
-      <td>32.882508</td>
-      <td>-117.224378</td>
-    </tr>
-    <tr>
-      <th>1519</th>
-      <td>1519</td>
-      <td>Voigt Dr &amp; Scripps Memorial Hospital</td>
-      <td>32.882398</td>
-      <td>-117.224232</td>
-    </tr>
-    <tr>
-      <th>1520</th>
-      <td>1520</td>
-      <td>Gilman Dr &amp; Evening Way</td>
-      <td>32.869566</td>
-      <td>-117.237935</td>
-    </tr>
-    <tr>
-      <th>1521</th>
-      <td>1521</td>
-      <td>La Jolla Village Dr &amp; N. Torrey Pines Rd</td>
-      <td>32.869972</td>
-      <td>-117.241793</td>
-    </tr>
-    <tr>
-      <th>1522</th>
-      <td>1522</td>
-      <td>Gilman Dr &amp; Evening Way</td>
-      <td>32.869186</td>
-      <td>-117.238060</td>
-    </tr>
-    <tr>
-      <th>1523</th>
-      <td>1523</td>
-      <td>John Hopkins Ct &amp; General Atomics (Building En...</td>
-      <td>32.893995</td>
-      <td>-117.236535</td>
-    </tr>
-    <tr>
-      <th>1524</th>
-      <td>1524</td>
-      <td>La Jolla Shores Dr &amp; Horizon Way</td>
-      <td>32.871445</td>
-      <td>-117.246942</td>
-    </tr>
-    <tr>
-      <th>1525</th>
-      <td>1525</td>
-      <td>Gilman Dr &amp; Evening Way</td>
-      <td>32.868806</td>
-      <td>-117.238184</td>
-    </tr>
-    <tr>
-      <th>1526</th>
-      <td>1526</td>
-      <td>General Atomics Ct &amp; John Hopkins Dr (Before T...</td>
-      <td>32.894073</td>
-      <td>-117.239191</td>
-    </tr>
-    <tr>
-      <th>1527</th>
-      <td>1527</td>
-      <td>La Jolla Shores Dr &amp; Horizon Way</td>
-      <td>32.871359</td>
-      <td>-117.247285</td>
-    </tr>
-    <tr>
-      <th>1528</th>
-      <td>1528</td>
-      <td>N Torrey Pines Rd &amp; Scripps Clinic Drwy</td>
-      <td>32.894078</td>
-      <td>-117.241260</td>
-    </tr>
-    <tr>
-      <th>1529</th>
-      <td>1529</td>
-      <td>La Jolla Shores Dr &amp; Horizon Way</td>
-      <td>32.871272</td>
-      <td>-117.247628</td>
-    </tr>
-    <tr>
-      <th>1530</th>
-      <td>1530</td>
-      <td>Medical Center Dr &amp; Health Sciences Dr</td>
-      <td>32.879046</td>
-      <td>-117.222283</td>
-    </tr>
-    <tr>
-      <th>1531</th>
-      <td>1531</td>
-      <td>Medical Center Dr &amp; Health Sciences Dr</td>
-      <td>32.879037</td>
-      <td>-117.222203</td>
-    </tr>
-    <tr>
-      <th>1532</th>
-      <td>1532</td>
-      <td>10350 Science Center Dr</td>
-      <td>32.893330</td>
-      <td>-117.230701</td>
-    </tr>
-    <tr>
-      <th>1533</th>
-      <td>1533</td>
-      <td>Medical Center Dr &amp; Health Sciences Dr</td>
-      <td>32.879140</td>
-      <td>-117.222123</td>
-    </tr>
-    <tr>
-      <th>1534</th>
-      <td>1534</td>
-      <td>Genesee Av &amp; Scripps Hospital</td>
-      <td>32.884236</td>
-      <td>-117.222171</td>
-    </tr>
-    <tr>
-      <th>1535</th>
-      <td>1535</td>
-      <td>Genesee Av &amp; Scripps Hospital</td>
-      <td>32.884358</td>
-      <td>-117.222088</td>
-    </tr>
-    <tr>
-      <th>1536</th>
-      <td>1536</td>
-      <td>Genesee Av &amp; Scripps Hospital</td>
-      <td>32.884480</td>
-      <td>-117.222004</td>
-    </tr>
-    <tr>
-      <th>1537</th>
-      <td>1537</td>
-      <td>N Torrey Pines Rd &amp; Scripps Clinic Drwy</td>
-      <td>32.894677</td>
-      <td>-117.241185</td>
-    </tr>
-    <tr>
-      <th>1538</th>
-      <td>1538</td>
-      <td>N Torrey Pines Rd &amp; Scripps Clinic Drwy</td>
-      <td>32.895275</td>
-      <td>-117.241111</td>
-    </tr>
-    <tr>
-      <th>1539</th>
-      <td>1539</td>
-      <td>Nobel Dr &amp; La Jolla Village Square Drwy</td>
-      <td>32.868011</td>
-      <td>-117.231658</td>
-    </tr>
-    <tr>
-      <th>1540</th>
-      <td>1540</td>
-      <td>Regents Road West Lot</td>
-      <td>32.880001</td>
-      <td>-117.220598</td>
-    </tr>
-    <tr>
-      <th>1541</th>
-      <td>1541</td>
-      <td>Genesee Av &amp; Campus Point Dr</td>
-      <td>32.882486</td>
-      <td>-117.220432</td>
-    </tr>
-    <tr>
-      <th>1542</th>
-      <td>1542</td>
-      <td>Genesee Av &amp; Campus Point Dr</td>
-      <td>32.882018</td>
-      <td>-117.220075</td>
-    </tr>
-    <tr>
-      <th>1543</th>
-      <td>1543</td>
-      <td>La Jolla Shores Dr &amp; Discovery Way</td>
-      <td>32.869503</td>
-      <td>-117.248523</td>
-    </tr>
-    <tr>
-      <th>1544</th>
-      <td>1544</td>
-      <td>Genesee Av &amp; Campus Point Dr</td>
-      <td>32.881551</td>
-      <td>-117.219718</td>
-    </tr>
-    <tr>
-      <th>1545</th>
-      <td>1545</td>
-      <td>La Jolla Shores Dr &amp; Discovery Way</td>
-      <td>32.869347</td>
-      <td>-117.248557</td>
-    </tr>
-    <tr>
-      <th>1546</th>
-      <td>1546</td>
-      <td>La Jolla Shores Dr &amp; Discovery Way</td>
-      <td>32.869192</td>
-      <td>-117.248591</td>
-    </tr>
-    <tr>
-      <th>1547</th>
-      <td>1547</td>
-      <td>La Jolla Village Dr &amp; Lebon Dr</td>
-      <td>32.871250</td>
-      <td>-117.223855</td>
-    </tr>
   </tbody>
 </table>
-<p>1548 rows × 4 columns</p>
 </div>
 </div>
 
@@ -12278,11 +12023,25 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">places</span> <span class="o">=</span> <span class="p">{</span><span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">itertuples</span><span class="p">()}</span>
-<span class="n">places</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&quot;places.csv&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">places</span> <span class="o">=</span> <span class="p">{</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">itertuples</span><span class="p">()}</span>
+
+<span class="p">{</span><span class="n">key</span><span class="p">:</span><span class="n">places</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">places</span><span class="o">.</span><span class="n">keys</span><span class="p">())[:</span><span class="mi">5</span><span class="p">]}</span>
 </pre></div>
 
 </div>
@@ -12295,7 +12054,7 @@ div#notebook {
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[3]:</div>
+<div class="prompt output_prompt">Out[7]:</div>
 
 
 
@@ -12304,1083 +12063,8 @@ div#notebook {
 <pre>{&#39;Mandeville Annex Gallery&#39;: (32.8781369, -117.2403332),
  &#39;University Art Gallery (UAG)&#39;: (32.87780120000001, -117.2407337),
  &#39;Crafts Center Grove Gallery&#39;: (32.8756918, -117.2356496),
- &#39;San Diego Center-Jewish Comm&#39;: (32.875716499999996, -117.21535039999999),
- &#39;Gotthelf Art Gallery&#39;: (32.87561000000001, -117.21500400000001),
- &#39;Waveriders Gallery&#39;: (32.89330359999999, -117.2175452),
- &#39;Copia Art&#39;: (32.8697147, -117.21228290000002),
- &#39;Symbolic Collection&#39;: (32.910368, -117.2292578),
- &#39;La Jolla Art Association&#39;: (32.8540417, -117.2549193),
- &#39;La Playa Gallery&#39;: (32.846457, -117.27413929999999),
- &#39;Upwelling Fine Art Gallery&#39;: (32.85421700000001, -117.256759),
- &#39;San Diego Art Loft&#39;: (32.91452999999999, -117.23387199999999),
- &#39;Simic Galleries&#39;: (32.88247339999999, -117.19488899999999),
- &#39;Oriental Heritage Inc&#39;: (32.9014363, -117.20040949999999),
- &#39;little bench art center&#39;: (32.8491159, -117.27066570000001),
- &#39;The La Jolla Gallery&#39;: (32.849284999999995, -117.27104150000001),
- &#39;Don Morris Art&#39;: (32.84928490000001, -117.27104150000001),
- &#39;Africa and Beyond&#39;: (32.849283299999996, -117.2715135),
- &#39;Prospect Place Fine Art&#39;: (32.8494832, -117.2717909),
- &#39;Siamak Art Gallery&#39;: (32.849437, -117.271732),
- &#39;Fiore Del Mare Art Gallery&#39;: (32.8486246, -117.27084939999999),
- &#39;Derissi Design Studio &amp; Art&#39;: (32.848900199999996, -117.2717699),
- &#39;T&#39;: (32.8387817, -117.2480794),
- &#39;LIK Fine Art La Jolla&#39;: (32.848824699999994, -117.27224220000001),
- &#39;Legends Gallery&#39;: (32.8488517, -117.2723393),
- &#39;National Geographic | Fine Art Galleries&#39;: (32.848645, -117.272145),
- &#39;Hallmark Galleries&#39;: (32.8488402, -117.27305390000001),
- &#39;Salazar Contemporary Fine Art&#39;: (32.8488402, -117.27305390000001),
- &#39;Ian Ely Gallery - La Jolla&#39;: (32.8485186, -117.2728057),
- &#39;Contemporary Fine Arts Gallery&#39;: (32.8480538, -117.2724848),
- &#39;Renoir Fine Arts&#39;: (32.848167499999995, -117.272726),
- &#39;Jane Burton&#39;: (32.848167499999995, -117.272726),
- &#39;Carlton Gallery Jewelry&#39;: (32.8485784, -117.2733166),
- &#39;Monarch | Arredon Contemporary&#39;: (32.84067700000001, -117.258793),
- &#39;Martin Lawrence Galleries&#39;: (32.8483782, -117.27321670000002),
- &#39;Warren-Grady Art Advisory Inc&#39;: (32.8478321, -117.2726442),
- &#39;Studio Spiazzi&#39;: (32.845247, -117.268961),
- &#39;Las Manos Del Artesano&#39;: (32.8473532, -117.2737324),
- &#39;Arjang Art Group&#39;: (32.84760170000001, -117.27416509999999),
- &#39;Fresh Paint Gallery&#39;: (32.8479478, -117.2746842),
- &#39;Ravean/Aaron Gallery&#39;: (32.8479478, -117.2746842),
- &#39;Cosmopolitan Fine Arts&#39;: (32.84696600000001, -117.274883),
- &#39;Mangelsen - Images of Nature Gallery&#39;: (32.846834799999996, -117.274961),
- &#39;Art N Soul&#39;: (32.835932, -117.22468500000001),
- &#39;Device Gallery&#39;: (32.8464462, -117.27500570000001),
- &#39;Independence Gallery&#39;: (32.8464007, -117.27632450000002),
- &#39;La Jolla Galleria&#39;: (32.8447822, -117.2750001),
- &#39;R.B. Stevenson Gallery&#39;: (32.84336529999999, -117.27302079999998),
- &#39;Joseph Bellows Gallery&#39;: (32.84335399999999, -117.27301200000001),
- &#39;Tim Craighead&#39;: (32.84335399999999, -117.27301200000001),
- &#39;Miya Hannan&#39;: (32.8432537, -117.272985),
- &#39;Tasende Gallery&#39;: (32.84572739999999, -117.2767314),
- &#39;Art Grafik USA Inc&#39;: (32.84401810000001, -117.27450259999998),
- &#39;Thumbprint Gallery&#39;: (32.843590500000005, -117.2743262),
- &#39;Kelmanortiz Fine Frames&#39;: (32.8438418, -117.2747303),
- &#39;K Nathan Gallery&#39;: (32.843812, -117.274768),
- &#39;Aldis Browne Fine Arts&#39;: (32.844159499999996, -117.2753731),
- &#39;Brennen Collection&#39;: (32.8425572, -117.27336709999999),
- &#39;Evgeny Yorobe Photography - San Diego Fine Art Gallery&#39;: (32.8428562,
-  -117.2750236),
- &#39;Bank of America ATM&#39;: (32.8682473, -117.23165530000001),
- &#39;USE Credit Union ATM&#39;: (32.8803713, -117.2360659),
- &#39;Chase Bank ATM&#39;: (32.88034879999999, -117.23606709999999),
- &#39;Wells Fargo ATM&#39;: (32.867319, -117.21419159999999),
- &#39;Chase ATM&#39;: (32.8681062, -117.2323827),
- &#39;Chase Bank&#39;: (32.854237, -117.201753),
- &#39;USE Credit Union&#39;: (32.877251, -117.2338264),
- &#39;ATM (Chase Bank)&#39;: (32.8770768, -117.2340373),
- &#39;Nationallink, Inc.&#39;: (32.8755118, -117.23545039999999),
- &#39;ATM&#39;: (32.9020291, -117.22567609999999),
- &#39;Cardtronics ATM&#39;: (32.8627016, -117.2232301),
- &#39;SDCCU La Jolla Torrey Pines Branch&#39;: (32.893718, -117.241757),
- &#39;Access to Money&#39;: (32.8690331, -117.2308461),
- &#39;Citibank ATM&#39;: (32.868107, -117.232111),
- &#39;Union Bank&#39;: (32.9210785, -117.21569),
- &#39;Merrimak Capital Corporation (ATM)&#39;: (32.9039049, -117.2439205),
- &#39;Wells Fargo Bank&#39;: (32.8918975, -117.20241259999999),
- &#39;SDCCU ATM&#39;: (32.896671399999995, -117.1937506),
- &#39;ATM Ledgelight Fcu&#39;: (32.897869, -117.23013),
- &#39;Bank of the West - ATM&#39;: (32.8725229, -117.21677720000001),
- &#39;CalPrivate Bank&#39;: (32.8770472, -117.21440770000001),
- &#39;Silvergate Bank&#39;: (32.8736793, -117.21501540000001),
- &#39;ATM (BB&amp;T)&#39;: (32.8738963, -117.2149124),
- &#39;City National Bank Branch&#39;: (32.873602000000005, -117.2150255),
- &#39;ATM (U.S. Bank)&#39;: (32.8744848, -117.2145865),
- &#39;1st Pacific Bank of California&#39;: (32.875628000000006, -117.21338870000001),
- &#39;California Bank &amp; Trust&#39;: (32.8732815, -117.21344609999998),
- &#39;Bank X&#39;: (32.874063899999996, -117.2125378),
- &#39;First Citizens Bank ATM&#39;: (32.86905029999999, -117.21523140000001),
- &#39;First Citizens Bank&#39;: (32.869057899999994, -117.2151447),
- &#39;Pacific Western Bank&#39;: (32.87465, -117.211827),
- &#39;Wells Fargo Home Mortgage&#39;: (32.8725458, -117.21214740000002),
- &#39;ATM (Union Bank)&#39;: (32.90178390000001, -117.22323159999999),
- &#39;Coinme Bitcoin ATM&#39;: (32.8707333, -117.2118647),
- &#39;ATM (Bank of America)&#39;: (32.8741603, -117.2102246),
- &#39;Bounce Back Investments LLC&#39;: (32.8977556, -117.21633759999999),
- &#39;Bank of America&#39;: (32.87411960000001, -117.21013729999999),
- &#39;Sprinkles Cupcakes and Ice Cream&#39;: (32.86920260000001, -117.23203500000001),
- &#39;Einstein Bros. Bagels&#39;: (32.8729612, -117.2175092),
- &#34;Specialty&#39;s Café &amp; Bakery&#34;: (32.8747665, -117.21336470000001),
- &#39;OHB of San Diego&#39;: (32.86283470000001, -117.22436689999999),
- &#39;Daily Bagel&#39;: (32.86273219999999, -117.2244225),
- &#39;85°C Bakery Cafe&#39;: (32.8694611, -117.21260339999999),
- &#39;85C Bakery Cafe - San Diego (University Town Center)&#39;: (32.869497700000004,
-  -117.2125655),
- &#34;&#39;Lette Macarons - San Diego&#34;: (32.87095949999999, -117.2106303),
- &#39;Corner Bakery Cafe&#39;: (32.8726508, -117.20939409999998),
- &#39;The Edible Ornament Company&#39;: (32.9067843, -117.22728390000002),
- &#39;Violet Del Mar&#39;: (32.9052454, -117.2157485),
- &#39;Cheese Shop&#39;: (32.8536671, -117.2562947),
- &#39;The Coffee Bean &amp; Tea Leaf&#39;: (32.8543319, -117.2035575),
- &#39;Golden Donut&#39;: (32.853631199999995, -117.2024209),
- &#39;AT Coffee House&#39;: (32.8491159, -117.27066570000001),
- &#39;Centerpiece Desserts&#39;: (32.887541600000006, -117.18239270000001),
- &#39;Benefit 1 Bakery&#39;: (32.887541600000006, -117.18239270000001),
- &#39;Girard Gourmet&#39;: (32.845805600000006, -117.27406380000001),
- &#39;Sugar and Scribe Bakery - Fine Food&#39;: (32.84295, -117.27516200000001),
- &#39;Euro Pastry &amp; Chocolate Fountain&#39;: (32.826685100000006, -117.22885500000001),
- &#39;Blue Box Bagels And Brew&#39;: (32.9060222, -117.1775212),
- &#39;pastry&#39;: (32.878996, -117.168846),
- &#39;Krispy Kreme Doughnuts&#39;: (32.8309843, -117.20225149999999),
- &#39;Great Circle Family Foods LLC&#39;: (32.8309956, -117.20217520000001),
- &#39;Cold Stone Creamery&#39;: (32.8296743, -117.2049768),
- &#39;Sadie Rose Baking Co&#39;: (32.88631919999999, -117.1676137),
- &#39;Donut Touch&#39;: (32.90634250000001, -117.1738331),
- &#39;Costco Bakery&#39;: (32.82298839999999, -117.2251845),
- &#34;Busy Bee&#39;s Bagel Bakery&#34;: (32.831601, -117.27620300000001),
- &#39;La Clochette Du Coin&#39;: (32.8311487, -117.27669879999999),
- &#39;Best Donuts &amp; Deli&#39;: (32.8354255, -117.1890683),
- &#39;Holsum Bakery&#39;: (32.883561300000004, -117.1629229),
- &#39;Gourmet Artisan Bakery&#39;: (32.879819899999994, -117.16167659999998),
- &#39;Bank of America Financial Center&#39;: (32.9209888, -117.21639669999999),
- &#39;Citibank&#39;: (32.8681152, -117.2320666),
- &#39;TIAA Financial Services&#39;: (32.86787090000001, -117.2285648),
- &#39;North American Bancard of San Diego&#39;: (32.866169, -117.232575),
- &#39;Bank of the West&#39;: (32.8724846, -117.21677450000001),
- &#39;Pacific Mercantile Bank&#39;: (32.8739222, -117.2155473),
- &#39;U.S. Bank Branch&#39;: (32.9203046, -117.2149726),
- &#39;USB GTO&#39;: (32.8744266, -117.2144673),
- &#39;Mechanics Bank&#39;: (32.8757396, -117.2132558),
- &#39;Torrey Pines Bank&#39;: (32.875347999999995, -117.212207),
- &#39;SDCCU UTC Regents Branch&#39;: (32.861763, -117.223345),
- &#39;First Foundation Bank&#39;: (32.873957, -117.21132970000001),
- &#39;Northern Trust&#39;: (32.8741493, -117.211174),
- &#39;Banner Bank&#39;: (32.8778239, -117.2100571),
- &#39;Silicon Valley Bank&#39;: (32.8740097, -117.2111392),
- &#39;Capital One Café&#39;: (32.8702134, -117.2129258),
- &#39;Comerica Bank&#39;: (32.875875, -117.207071),
- &#39;Crestmark Bank&#39;: (32.871792600000006, -117.20710009999999),
- &#39;Mike Radi with PrimeLending San Diego&#39;: (32.875064, -117.203952),
- &#39;Principal life insurance company&#39;: (32.8913393, -117.203115),
- &#39;Merchant Banking Strategies&#39;: (32.8942197, -117.2032119),
- &#39;State Street Bank &amp; Trust Co&#39;: (32.8971493, -117.20105009999999),
- &#39;California Coast Credit Union-atm only&#39;: (32.8517497, -117.21483700000002),
- &#39;Mutual of Omaha Bank&#39;: (32.91946280000001, -117.2343922),
- &#39;SDCCU Sorrento Mesa Branch&#39;: (32.90086780000001, -117.192923),
- &#39;U.S. Bank ATM - Torrey Hills Vons&#39;: (32.9202213, -117.2150717),
- &#39;First Republic Bank&#39;: (32.8492119, -117.27291640000001),
- &#39;Opus Bank&#39;: (32.8486258, -117.27222920000001),
- &#39;REALTY&#39;: (32.8953364, -117.18768909999999),
- &#39;Fireside Lounge&#39;: (32.882152000000005, -117.23872),
- &#39;Sun God Lounge&#39;: (32.8800296, -117.2371376),
- &#39;Zanzibar Cafe At the Loft&#39;: (32.87960690000001, -117.2358855),
- &#39;Hops and Salt UCSD&#39;: (32.8856385, -117.2405121),
- &#39;Middle Earth Lounge&#39;: (32.8852891, -117.24308300000001),
- &#39;Estancia La Jolla Hotel &amp; Spa&#39;: (32.8842343, -117.2445404),
- &#39;Rock Bottom Restaurant &amp; Brewery&#39;: (32.871188000000004, -117.23424579999998),
- &#39;Woo Karaoke&#39;: (32.870538399999994, -117.2319578),
- &#39;Humphreys La Jolla Grill&#39;: (32.8703607, -117.23144170000002),
- &#39;Shooters&#39;: (32.8703607, -117.23144170000002),
- &#39;Rough Draft Brewing Pub - UCSD&#39;: (32.87564599999999, -117.2227223),
- &#39;Torrey Pints&#39;: (32.8687404, -117.23062579999998),
- &#34;BJ&#39;s Restaurant &amp; Brewhouse&#34;: (32.867933799999996, -117.2331176),
- &#39;Regency Club&#39;: (32.8710072, -117.22540359999998),
- &#39;Drift&#39;: (32.8710436, -117.2253254),
- &#39;Islands Restaurant La Jolla&#39;: (32.8674715, -117.23158959999999),
- &#34;Fleming&#39;s Prime Steakhouse &amp; Wine Bar&#34;: (32.8707943, -117.22428149999999),
- &#34;Truluck&#39;s&#34;: (32.870847, -117.224199),
- &#39;The Melting Pot&#39;: (32.870503, -117.224327),
- &#39;Symbolic Wines&#39;: (32.86603289999999, -117.2334287),
- &#39;zpizza Taproom&#39;: (32.8651198, -117.231587),
- &#39;Torreyana Grille&#39;: (32.901534999999996, -117.243771),
- &#39;The Wine Bar&#39;: (32.8723646, -117.213181),
- &#39;Ki Sushi &amp; Sake Bar&#39;: (32.869057899999994, -117.2151447),
- &#39;Raised by Wolves&#39;: (32.8721475, -117.2128706),
- &#39;Great Maple - La Jolla&#39;: (32.87015969999999, -117.21367620000001),
- &#39;Apollonia Greek Bistro&#39;: (32.8681973, -117.2150388),
- &#39;Pubs Arena&#39;: (32.874076, -117.211074),
- &#39;The Grill at Torrey Pines&#39;: (32.904232300000004, -117.24496409999998),
- &#39;Smokeyard&#39;: (32.8694144, -117.2129128),
- &#39;ArcLight Cinemas&#39;: (32.8711157, -117.2116741),
- &#39;Bottlecraft Sorrento Valley&#39;: (32.905029, -117.22863410000001),
- &#39;Seasons 52&#39;: (32.8722686, -117.2096959),
- &#39;Galaxy Taco&#39;: (32.853671999999996, -117.25445400000001),
- &#39;New English Brewing - San Diego Brewery&#39;: (32.9122877, -117.23193140000001),
- &#39;Piatti&#39;: (32.854036, -117.25604240000001),
- &#39;Shore Rider Bar&#39;: (32.8541129, -117.256355),
- &#39;Shores Restaurant&#39;: (32.8549788, -117.25815559999998),
- &#39;Barbarella Restaurant &amp; Bar&#39;: (32.8536352, -117.25610659999998),
- &#39;Osteria Romantica&#39;: (32.8537186, -117.25643229999999),
- &#39;Hiatus Pool Lounge&#39;: (32.8512762, -117.25324640000001),
- &#39;Cusp Dining &amp; Drinks&#39;: (32.851194899999996, -117.253239),
- &#39;Karl Strauss Brewing Company&#39;: (32.8471828, -117.2736503),
- &#39;Outcast Grill&#39;: (32.8518499, -117.2172029),
- &#39;launchbox&#39;: (32.9169065, -117.2371312),
- &#39;Bistro 39 Restaurant and Bar&#39;: (32.9171592, -117.22876470000001),
- &#34;Chili&#39;s Grill &amp; Bar&#34;: (32.8969789, -117.19300559999999),
- &#39;Goldfish Point Cafe&#39;: (32.849505300000004, -117.27075430000001),
- &#39;Brockton Villa Restaurant&#39;: (32.84984859999999, -117.2715422),
- &#34;Eddie V&#39;s Prime Seafood&#34;: (32.8492463, -117.271049),
- &#39;Lighthouse Oyster Bar &amp; Grill, 262 Harbor Dr.&#39;: (32.898564799999996,
-  -117.1904165),
- &#39;Covo La Jolla&#39;: (32.848645, -117.272145),
- &#39;Gravity Heights&#39;: (32.90075699999999, -117.19102600000001),
- &#39;We Olive &amp; Wine Bar&#39;: (32.84883720000001, -117.2731547),
- &#39;THE MED&#39;: (32.8486381, -117.2736945),
- &#39;La Sala Lounge&#39;: (32.8486381, -117.2736945),
- &#39;The Spot&#39;: (32.8474816, -117.2744507),
- &#39;Puesto La Jolla&#39;: (32.846986199999996, -117.27383459999999),
- &#39;Herringbone La Jolla&#39;: (32.846138399999994, -117.2728294),
- &#39;Salon 101&#39;: (32.879573, -117.23629740000001),
- &#39;Salon De Claude &amp; Spa Corporation&#39;: (32.8752598, -117.2356856),
- &#39;Hair Carole F&#39;: (32.8749458, -117.2322794),
- &#39;La Jolla Plastic Surgery &amp; Dermatology&#39;: (32.88326, -117.226499),
- &#39;The Nails Club&#39;: (32.869500699999996, -117.23232790000002),
- &#39;Young Attitudes Aveda Salon &amp; Spa&#39;: (32.86947060000001, -117.2313912),
- &#39;Drybar La Jolla&#39;: (32.869074100000006, -117.2325404),
- &#39;European Wax Center&#39;: (32.869031400000004, -117.2326104),
- &#39;Empire Beauty&#39;: (32.8694735, -117.2309669),
- &#39;Threadology&#39;: (32.8690331, -117.2308461),
- &#39;Shaft Medical San Diego&#39;: (32.870887100000004, -117.22690890000001),
- &#39;La Jolla Face and Body&#39;: (32.870012800000005, -117.2266867),
- &#39;Karen Berger BS&#39;: (32.8698445, -117.2262713),
- &#39;Pepe Roxanne MD&#39;: (32.8678581, -117.22841059999999),
- &#39;Belladerma Cosmetic Surgery &amp; Skin Care Center&#39;: (32.8678105,
-  -117.22843219999999),
- &#39;Supercuts&#39;: (32.8699011, -117.2154937),
- &#39;Benefit Brow Bar at Ulta&#39;: (32.865605800000004, -117.23196670000002),
- &#39;Salon Petite on Nobel&#39;: (32.867259499999996, -117.2272884),
- &#39;Ulta Beauty&#39;: (32.8654375, -117.23196509999998),
- &#39;ThousandLashes&#39;: (32.8696115, -117.22105790000002),
- &#39;Joel C Ma Hair Studio&#39;: (32.8732042, -117.21760900000001),
- &#39;Aesthetic Medicine&#39;: (32.873014399999995, -117.2172979),
- &#39;Lashes By Nxncy&#39;: (32.8702479, -117.21921),
- &#39;X Rated Hair&#39;: (32.871936100000006, -117.21788810000001),
- &#39;Evian Salon &amp; Spa&#39;: (32.87220299999999, -117.21758),
- &#39;Sterling Mobile Salon&#39;: (32.8738206, -117.21566170000001),
- &#39;TAAZ&#39;: (32.8745413, -117.21494440000001),
- &#34;Beginner&#39;s Mind Method&#34;: (32.89817500000001, -117.22191470000001),
- &#39;Mcneil Wendy II&#39;: (32.86283470000001, -117.22436689999999),
- &#34;Cindy&#39;s Hair Design&#34;: (32.86283470000001, -117.22436689999999),
- &#39;Nail 2000 of UTC&#39;: (32.86262149999999, -117.2241027),
- &#39;Fantastic Sams Cut &amp; Color&#39;: (32.86195549999999, -117.22463159999998),
- &#39;Intercasting&#39;: (32.874063899999996, -117.2125378),
- &#39;Justin At Richard Joseph Salon&#39;: (32.8960272, -117.2172236),
- &#39;Zia Threading&#39;: (32.8688819, -117.21498009999999),
- &#39;Bare Elegance Waxing&#39;: (32.86882209999999, -117.2150167),
- &#39;Pampered Hands Nails Salon&#39;: (32.86872930000001, -117.2150864),
- &#34;Michael&#39;s Hair Design&#34;: (32.8720863, -117.21262970000001),
- &#39;The Spa Torrey Pines&#39;: (32.9038014, -117.24449129999999),
- &#39;Massage Envy - UTC&#39;: (32.8679881, -117.21520919999999),
- &#39;Credo&#39;: (32.8718794, -117.2124937),
- &#39;Mane Tamers&#39;: (32.9011568, -117.22253719999999),
- &#39;Skin Solutions&#39;: (32.8764553, -117.21033270000001),
- &#34;Benefit Brow Bar at Macy&#39;s&#34;: (32.8691003, -117.2124635),
- &#39;Raphael International Hair&#39;: (32.8735309, -117.20974),
- &#39;Jackson Marsha&#39;: (32.8735309, -117.20974),
- &#39;South Coast MedSpa San Diego&#39;: (32.8945598, -117.2120399),
- &#39;Gold Elements Spa&#39;: (32.8707249, -117.2101622),
- &#39;Brazilia Skin Care &amp; Day Spa UTC&#39;: (32.87062240000001, -117.20974199999999),
- &#39;Newport Hair Loss Center&#39;: (32.8747002, -117.20651969999999),
- &#34;Brenda&#39;s Hairstyling&#34;: (32.8674677, -117.2064278),
- &#39;Nails by TM&#39;: (32.8674677, -117.2064278),
- &#39;LaserAway&#39;: (32.8678464, -117.20614979999999),
- &#39;Hairlich Beauty Salon&#39;: (32.8674912, -117.2058262),
- &#34;Adrian&#39;s Creations Hair &amp; Nail&#34;: (32.867381800000004, -117.20582579999999),
- &#39;Holder Jamie&#39;: (32.867381800000004, -117.20582579999999),
- &#39;Khatamee Miryam&#39;: (32.867381800000004, -117.20582579999999),
- &#39;Hairlich now L-TRANsformation&#39;: (32.867381800000004, -117.20582579999999),
- &#39;L-TRANsformation&#39;: (32.8673906, -117.2058062),
- &#39;Campus Bike &amp; Skate&#39;: (32.8769364, -117.2398519),
- &#39;UC Cyclery&#39;: (32.867425, -117.23268),
- &#39;Cycle Quest&#39;: (32.9018509, -117.22539779999998),
- &#39;North of the Border Bike Shop&#39;: (32.90512460000001, -117.2147331),
- &#39;Performance Bicycle&#39;: (32.91407199999999, -117.232927),
- &#39;International Shops Courtyard&#39;: (32.84872410000001, -117.27170020000001),
- &#39;Pacific Beach Bike&#39;: (32.84722, -117.27333),
- &#39;San Diego Fly Rides&#39;: (32.83980909999999, -117.2725291),
- &#39;Phantom Bikes&#39;: (32.8811741, -117.1733499),
- &#39;Phantom Bikes LLC&#39;: (32.8812836, -117.17317820000001),
- &#39;Dregs Skateboards&#39;: (32.8271336, -117.23017779999999),
- &#39;California Bicycle Inc&#39;: (32.8386239, -117.27864790000001),
- &#39;TrainChange Indoor Cycling &amp; Circuit Training Studio&#39;: (32.9057413,
-  -117.1763764),
- &#39;WeeBikeShop Inc&#39;: (32.8820742, -117.1665014),
- &#39;Q Bikes&#39;: (32.8275317, -117.20639469999999),
- &#39;UCSD Bookstore&#39;: (32.87944079999999, -117.23693529999998),
- &#39;Groundwork Bookstore&#39;: (32.87722899999999, -117.240103),
- &#39;Deseret Book&#39;: (32.8654195, -117.23241770000001),
- &#39;Taming Your Guts&#39;: (32.868932799999996, -117.223184),
- &#39;San Diego Jewish Book Fair&#39;: (32.87561000000001, -117.21500400000001),
- &#39;Book Place&#39;: (32.874059, -117.2125764),
- &#39;Barnes &amp; Noble&#39;: (32.869209600000005, -117.21534009999998),
- &#39;Amazon Books&#39;: (32.8712879, -117.20999809999999),
- &#39;IDEA Health &amp; Fitness Association&#39;: (32.903831800000006,
-  -117.20882809999999),
- &#39;Baby Genius&#39;: (32.8937588, -117.19405990000001),
- &#39;Horrible Books&#39;: (32.85766450000001, -117.2012135),
- &#39;Del Sol Books&#39;: (32.8576451, -117.2012158),
- &#39;Angela Book Store&#39;: (32.8489488, -117.2726706),
- &#39;Fairy Good Heart LLC&#39;: (32.844865999999996, -117.269376),
- &#39;Christian Science Reading Room&#39;: (32.84616129999999, -117.2740068),
- &#39;Higuera Law Offices, APLC&#39;: (32.92853279999999, -117.2390386),
- &#34;Warwick&#39;s&#34;: (32.8453493, -117.2742885),
- &#39;D G Wills Books&#39;: (32.8401259, -117.2719983),
- &#39;Bauer Rare Books&#39;: (32.839977000000005, -117.27270940000001),
- &#39;Serenity Shop&#39;: (32.834960200000005, -117.1888289),
- &#39;Gilman Dr &amp; Myers Dr&#39;: (32.87694860000001, -117.23553290000001),
- &#39;N Torrey Pines Rd &amp; Muir College Dr&#39;: (32.881349699999994, -117.2436898),
- &#39;N Torrey Pines Rd &amp; Almahurst Row&#39;: (32.8804647, -117.24402830000001),
- &#39;Gilman Dr &amp; Eucalyptus Grove Ln&#39;: (32.875265500000005, -117.23875490000002),
- &#39;N Torrey Pines Rd &amp; Salk Institute Rd&#39;: (32.88578640000001, -117.2439582),
- &#39;N Torrey Pines Rd &amp; Torrey Pines Scenic Dr&#39;: (32.887475, -117.2438372),
- &#39;VA Hospital&#39;: (32.87483069999999, -117.23296210000001),
- &#39;N Torrey Pines Rd &amp; La Jolla Shores Dr&#39;: (32.874644800000006, -117.2434935),
- &#39;N Torrey Pines Rd &amp; North Point Dr&#39;: (32.889558199999996,
-  -117.24248270000001),
- &#39;Scholars Dr South &amp; Revelle College Dr&#39;: (32.8724011, -117.2412143),
- &#39;Villa La Jolla Dr &amp; La Jolla Village Dr&#39;: (32.87126049999999, -117.2339905),
- &#39;La Jolla Shores Dr &amp; Inyaha Ln&#39;: (32.8739844, -117.244955),
- &#39;La Jolla Shores Dr &amp; Poole St&#39;: (32.8738204, -117.2448392),
- &#39;N Torrey Pines Rd &amp; Genesee Av&#39;: (32.89135889999999, -117.2414051),
- &#39;Revelle College Dr &amp; N Torrey Pines Rd&#39;: (32.8715699, -117.242042),
- &#39;La Jolla Village Dr &amp; Villa La Jolla Dr&#39;: (32.8714956, -117.23310719999999),
- &#39;N Torrey Pines Rd &amp; Expedition Way&#39;: (32.8716419, -117.2436844),
- &#39;Voigt Dr &amp; Scripps Memorial Hospital&#39;: (32.8823979, -117.2242321),
- &#39;Gilman Dr &amp; Evening Way&#39;: (32.86880550000001, -117.238184),
- &#39;La Jolla Village Dr &amp; N. Torrey Pines Rd&#39;: (32.86997219999999,
-  -117.24179280000001),
- &#39;John Hopkins Ct &amp; General Atomics (Building Entran&#39;: (32.89399530000001,
-  -117.2365351),
- &#39;La Jolla Shores Dr &amp; Horizon Way&#39;: (32.871272, -117.2476277),
- &#39;General Atomics Ct &amp; John Hopkins Dr (Before Turn)&#39;: (32.894073,
-  -117.23919109999999),
- &#39;N Torrey Pines Rd &amp; Scripps Clinic Drwy&#39;: (32.8952752, -117.2411105),
- &#39;Medical Center Dr &amp; Health Sciences Dr&#39;: (32.8791399, -117.222123),
- &#39;10350 Science Center Dr&#39;: (32.89333010000001, -117.2307013),
- &#39;Genesee Av &amp; Scripps Hospital&#39;: (32.884479600000006, -117.22200420000001),
- &#39;Nobel Dr &amp; La Jolla Village Square Drwy&#39;: (32.868010999999996,
-  -117.23165800000001),
- &#39;Regents Road West Lot&#39;: (32.8800013, -117.22059820000001),
- &#39;Genesee Av &amp; Campus Point Dr&#39;: (32.88155109999999, -117.21971770000002),
- &#39;La Jolla Shores Dr &amp; Discovery Way&#39;: (32.8691919, -117.2485909),
- &#39;La Jolla Village Dr &amp; Lebon Dr&#39;: (32.8712501, -117.22385459999998),
- &#39;La Jolla Shores Dr &amp; Shellback Way&#39;: (32.8702241, -117.2514558),
- &#39;Nobel Dr &amp; Lebon Dr&#39;: (32.8682932, -117.22518319999999),
- &#39;N Torrey Pines Rd &amp; John Hopkins Dr&#39;: (32.89780189999999, -117.2420414),
- &#39;Gilman Dr &amp; Villa La Jolla Dr&#39;: (32.86435090000001, -117.2363753),
- &#39;La Jolla Shores Dr &amp; Biological Grade&#39;: (32.8694497, -117.2517075),
- &#39;N Torrey Pines Rd &amp; John J. Hopkins Dr&#39;: (32.8979286, -117.24166159999999),
- &#39;Lebon Dr &amp; Nobel Dr&#39;: (32.8685972, -117.22468959999999),
- &#39;John Hopkins Dr &amp; N Torrey Pines Rd (Before Turn)&#39;: (32.89819190000001,
-  -117.24173629999999),
- &#39;Villa La Jolla Dr &amp; Gilman Dr&#39;: (32.8642546, -117.235345),
- &#39;La Jolla Shores Dr &amp; Downwind Way&#39;: (32.8676711, -117.2520878),
- &#34;Audrey&#39;s Café in Geisel Library&#34;: (32.8810887, -117.23722190000001),
- &#39;Starbucks&#39;: (32.880086, -117.236406),
- &#39;Perks Coffee Shop&#39;: (32.8792299, -117.2369253),
- &#39;Tapioca Express&#39;: (32.87963169999999, -117.2356142),
- &#39;Chez Bob&#39;: (32.881825, -117.23353429999999),
- &#39;Art of Espresso&#39;: (32.877639499999994, -117.2391975),
- &#39;Muir Woods Coffee House&#39;: (32.878797, -117.2425912),
- &#34;Peet&#39;s Coffee&#34;: (32.8859845, -117.24049299999999),
- &#39;Café Ventanas&#39;: (32.886078600000005, -117.24276509999999),
- &#39;Fairbanks Coffee&#39;: (32.874986199999995, -117.2406743),
- &#39;Happy Bean Caffe&#39;: (32.8874381, -117.2452489),
- &#39;Salk Cafe&#39;: (32.8867613, -117.2466972),
- &#39;Bella Vista Social Club &amp; Caffe&#39;: (32.88917899999999, -117.244),
- &#39;Green Acre Nautilus&#39;: (32.8935192, -117.2383),
- &#39;Come On In! Café&#39;: (32.878748, -117.223344),
- &#39;Philz Coffee&#39;: (32.869347499999996, -117.23196399999999),
- &#39;Nekter Juice Bar&#39;: (32.8690924, -117.23208600000001),
- &#39;The Patio Marketplace&#39;: (32.884531, -117.21134340000002),
- &#39;Allegro Coffee Company&#39;: (32.8688799, -117.23079140000002),
- &#34;Mrs.Gooch&#39;s Cafe&#34;: (32.868574, -117.2306523),
- &#39;GardenBlend Caffé&#39;: (32.869566600000006, -117.2273864),
- &#39;Mind the Cup Cafe&#39;: (32.8675311, -117.2287541),
- &#39;Pinpoint Cafe&#39;: (32.8671765, -117.25272369999999),
- &#39;Lawrence Family Jewish Community Center&#39;: (32.875696399999995, -117.2157629),
- &#39;The Bean&#39;: (32.87561000000001, -117.21500400000001),
- &#39;Eddy M’s Café&#39;: (32.8745119, -117.2149726),
- &#39;Swimtails&#39;: (32.8863759, -117.21416979999998),
- &#39;Specialties Café and Bakery&#39;: (32.8745275, -117.21370139999999),
- &#39;Shanghai Cafe&#39;: (32.86283470000001, -117.22436689999999),
- &#34;Caroline&#39;s Seaside Cafe&#34;: (32.8645397, -117.2541726),
- &#39;Zumbar Coffee &amp; Tea&#39;: (32.90198549999999, -117.22565259999999),
- &#39;LuckyBolt&#39;: (32.901964299999996, -117.2254987),
- &#39;Nordstrom Ebar Artisan Coffee&#39;: (32.8709914, -117.2133726),
- &#39;La Colombe Coffee&#39;: (32.8719186, -117.2128116),
- &#39;Cafe Fusion&#39;: (32.877908399999995, -117.21051259999999),
- &#39;Cafe Pascale&#39;: (32.876047, -117.210774),
- &#34;McDonald&#39;s&#34;: (32.86682119999999, -117.2153675),
- &#39;In House&#39;: (32.87239199999999, -117.211327),
- &#39;JOE &amp; THE JUICE&#39;: (32.87143270000001, -117.21150359999999),
- &#39;Come On In! Cafe&#39;: (32.90597, -117.2420503),
- &#39;Bottega Italiana&#39;: (32.8706362, -117.21175339999999),
- &#39;Copa Vida&#39;: (32.9048483, -117.22893049999999),
- &#39;NESPRESSO&#39;: (32.8709766, -117.2111364),
- &#39;Elixir Espresso Bar&#39;: (32.87172329999999, -117.20973359999999),
- &#39;Santa Fe Park RV Resort&#39;: (32.827513, -117.23168700000001),
- &#39;Friends Resale Shop&#39;: (32.8783962, -117.23722350000001),
- &#39;La Jolla Design&#39;: (32.8730397, -117.2443139),
- &#39;Nordstrom Rack The Shops at La Jolla Village&#39;: (32.86933500000001,
-  -117.23335829999999),
- &#39;Marshalls&#39;: (32.866559, -117.23156499999999),
- &#39;Ross Dress for Less&#39;: (32.86574529999999, -117.2317254),
- &#39;Pier 1&#39;: (32.865606, -117.231977),
- &#39;Athlete Shop&#39;: (32.87360199999999, -117.2150254),
- &#39;THREAD AVENUE&#39;: (32.87354199999999, -117.21499399999999),
- &#39;ALOR International LTD&#39;: (32.874612400000004, -117.2133598),
- &#39;Aritzia&#39;: (32.8718869, -117.2135875),
- &#39;Lacoste&#39;: (32.8721528, -117.21260670000001),
- &#39;Suitsupply San Diego&#39;: (32.87188459999999, -117.21342),
- &#34;Men&#39;s Wearhouse&#34;: (32.8689782, -117.2151104),
- &#39;The House Of Halloween&#39;: (32.86895490000001, -117.21496090000002),
- &#39;Nordstrom La Jolla at UTC&#39;: (32.8709921, -117.2133749),
- &#39;Brandy &amp; Melville&#39;: (32.872191, -117.2115392),
- &#39;Vineyard Vines&#39;: (32.871525399999996, -117.21295220000002),
- &#39;Johnny Was&#39;: (32.871364699999994, -117.2128631),
- &#39;UNTUCKit&#39;: (32.871406199999996, -117.2128364),
- &#39;Jo Malone London&#39;: (32.871687800000004, -117.21260819999999),
- &#39;Marine Layer&#39;: (32.87192959999999, -117.2124732),
- &#39;Rodd &amp; Gunn&#39;: (32.87120739999999, -117.21285449999999),
- &#39;Billabong&#39;: (32.870436, -117.21294099999999),
- &#39;No Rest For Bridget San Diego&#39;: (32.8712059, -117.21248270000001),
- &#39;JAMES PERSE&#39;: (32.8719112, -117.2120855),
- &#39;James Perse&#39;: (32.87195599999999, -117.21205549999999),
- &#34;My Sister&#39;s Closet&#34;: (32.86811369999999, -117.21459109999998),
- &#39;Superdry&#39;: (32.870346500000004, -117.21293419999999),
- &#39;SKECHERS Retail&#39;: (32.8702134, -117.2129258),
- &#39;Sundance Catalog&#39;: (32.8717129, -117.2118419),
- &#39;Cotton On&#39;: (32.8698852, -117.2129287),
- &#39;Typo&#39;: (32.869961100000005, -117.2128565),
- &#39;American Eagle Outfitters&#39;: (32.8697424, -117.2129281),
- &#39;Allen Edmonds&#39;: (32.8716675, -117.2117528),
- &#39;lululemon&#39;: (32.87159719999999, -117.2116588),
- &#39;Stance University Towne Center&#39;: (32.870051600000004, -117.2125111),
- &#39;Turkish Towels &amp; More - Citizens of the Beach&#39;: (32.8634039,
-  -117.21866000000001),
- &#39;Forever 21&#39;: (32.8710093, -117.21171840000001),
- &#39;Justice&#39;: (32.8702949, -117.21196499999999),
- &#39;Michael Kors&#39;: (32.8715458, -117.2111888),
- &#39;J.Crew&#39;: (32.871238500000004, -117.21135249999999),
- &#39;Find Your Feet&#39;: (32.86983420000001, -117.21212539999999),
- &#39;Sun Diego&#39;: (32.87064110000001, -117.2115993),
- &#39;Abercrombie &amp; Fitch&#39;: (32.8698406, -117.21207749999999),
- &#39;Scarves&#39;: (32.8716147, -117.2110419),
- &#39;Brighton&#39;: (32.8706842, -117.21151529999999),
- &#39;PANDORA Jewelry&#39;: (32.8707273, -117.2114761),
- &#39;Roehampton Road - Westfield UTC&#39;: (32.8696942, -117.2120558),
- &#34;Macy&#39;s&#34;: (32.8692267, -117.2123635),
- &#39;Sock Harbor&#39;: (32.8696945, -117.21204979999999),
- &#39;Janie and Jack&#39;: (32.8714187, -117.21098319999999),
- &#39;BCBGeneration&#39;: (32.8690191, -117.2124388),
- &#39;KAA&#39;: (32.86979819999999, -117.211854),
- &#39;Tommy Bahama&#39;: (32.8713847, -117.21086470000002),
- &#39;Oakley Store&#39;: (32.8701586, -117.2115222),
- &#39;Free People&#39;: (32.871308500000005, -117.21080559999999),
- &#39;Gymboree&#39;: (32.8698452, -117.2116321),
- &#39;Sunshine Market&#39;: (32.8796303, -117.2360054),
- &#39;Short Stop Grab &amp; Go&#39;: (32.885878399999996, -117.2405375),
- &#39;Amazon Locker - Village&#39;: (32.88800999999999, -117.24254099999999),
- &#34;Roger&#39;s Place and Market&#34;: (32.874503600000004, -117.2422475),
- &#39;Gary &amp; Mary West&#39;: (32.891523, -117.24176000000001),
- &#39;Mobil Gas Station&#39;: (32.871221399999996, -117.2333864),
- &#39;CVS&#39;: (32.831511199999994, -117.2047409),
- &#39;Street Corner&#39;: (32.8746222, -117.21189469999999),
- &#39;San Diego Car Care&#39;: (32.8669874, -117.2159403),
- &#39;Chevron San Diego&#39;: (32.867012800000005, -117.21584540000002),
- &#39;Whale Tails Tortilla Chips&#39;: (32.8542033, -117.25629029999999),
- &#39;Shell&#39;: (32.906571, -117.17468999999998),
- &#39;Mobil&#39;: (32.85422399999999, -117.204927),
- &#39;Rite Aid&#39;: (32.854001000000004, -117.202289),
- &#39;star residential&#39;: (32.856305199999994, -117.19695719999999),
- &#39;Stars &amp; Stripes Travel Center&#39;: (32.877108500000006, -117.1861179),
- &#39;Document Express&#39;: (32.847288, -117.27308219999999),
- &#39;La Jolla Outpost&#39;: (32.8481295, -117.2745083),
- &#39;Mt. Soledad Market &amp; Deli&#39;: (32.832217, -117.24466299999999),
- &#39;ampm&#39;: (32.8347928, -117.1952731),
- &#39;Carmel Valley Market Wine &amp; Spirits&#39;: (32.9333461, -117.2530476),
- &#39;Chevron&#39;: (32.8388185, -117.2778794),
- &#39;EM ExtraMile&#39;: (32.8386058, -117.27818090000001),
- &#39;7-Eleven&#39;: (32.8328478, -117.27657250000001),
- &#39;CHEVRON&#39;: (32.9070966, -117.1716659),
- &#39;Kavanaugh Arthur Fran MD&#39;: (32.87995479999999, -117.23711999999999),
- &#39;University-California Library: Wachs Deborah S MD&#39;: (32.8807041,
-  -117.24007659999998),
- &#39;Dr. Robert R. Gorney, MD&#39;: (32.8807041, -117.24007659999998),
- &#39;Haas Richard MD&#39;: (32.8807041, -117.24007659999998),
- &#39;Colin A. Depp, PhD&#39;: (32.8807041, -117.24007659999998),
- &#39;Schanzlin David J MD&#39;: (32.8807041, -117.24007659999998),
- &#39;Jonathan Walters (MD)&#39;: (32.8793408, -117.2379866),
- &#39;Dr. Charles Maletz&#39;: (32.8807318, -117.24019990000001),
- &#39;University-California Library: Kallenberg Gene A MD&#39;: (32.8808279,
-  -117.2403243),
- &#39;Ayyad Alaeddin M MD&#39;: (32.8806946, -117.2403095),
- &#39;Dr. William C. Mobley, MD&#39;: (32.88240690000001, -117.23481720000001),
- &#39;Dr. Jung S. Yi, MD&#39;: (32.8769216, -117.23615430000001),
- &#39;Dr. Camellia P. Clark, MD&#39;: (32.8769206, -117.2361539),
- &#39;Dr. Alan F. Hofmann, MD&#39;: (32.876923600000005, -117.2361402),
- &#39;Dr. John A. Thorson, MD&#39;: (32.8769207, -117.23614779999998),
- &#39;Joan P. Laundy, MSN&#39;: (32.8769207, -117.23614779999998),
- &#34;Dr. Edward O. O&#39;brien, MD&#34;: (32.8769207, -117.23614779999998),
- &#39;Dr. Jaime S. Green, MD&#39;: (32.8769207, -117.23614779999998),
- &#39;Dr. Michael K. Gilson, MD&#39;: (32.8769207, -117.23614779999998),
- &#39;Sharon L. Nichols, PHD&#39;: (32.8768903, -117.23617990000001),
- &#39;Dr. Scott R. Vandenberg, MD&#39;: (32.8768728, -117.2361367),
- &#39;Natalie M. Rice-Thorp, PHD&#39;: (32.8768656, -117.23609679999998),
- &#39;Dr. John R Kelsoe&#39;: (32.87758470000001, -117.2336912),
- &#39;Klap Patricia C MD&#39;: (32.87721269999999, -117.23404599999999),
- &#39;Rhonda L. Hackshaw, PHD&#39;: (32.877189, -117.23394760000001),
- &#39;University-California Library: Zu Kai MD&#39;: (32.87713159999999, -117.2339933),
- &#39;Campbell Niday Takeshia MD&#39;: (32.87708080000001, -117.2340202),
- &#39;Univ of Ca San Diego Med Center: Nadeau Jennifer MD&#39;: (32.87708080000001,
-  -117.2340202),
- &#39;Kaplan Joel a MD&#39;: (32.87708080000001, -117.2340202),
- &#39;Ries Andrew L MD&#39;: (32.87708080000001, -117.2340202),
- &#39;Savides Thomas J MD&#39;: (32.87708080000001, -117.2340202),
- &#39;Dr. Chih-Wen Shi, MD&#39;: (32.87708080000001, -117.2340202),
- &#39;University-California Library: Kripke Daniel MD&#39;: (32.87708080000001,
-  -117.2340202),
- &#39;University-California Library: Carrier Ewa K MD&#39;: (32.87708080000001,
-  -117.2340202),
- &#39;University-California Library: Brownell Kristin MD&#39;: (32.87708080000001,
-  -117.2340202),
- &#39;Langham Kathryn A MD&#39;: (32.87708080000001, -117.2340202),
- &#39;University-California Library: Pilz Renate B MD&#39;: (32.87708080000001,
-  -117.2340202),
- &#39;Grimm Paul C MD&#39;: (32.87708080000001, -117.2340202),
- &#39;University-California Library: Rodwell Timothy MD&#39;: (32.87708080000001,
-  -117.2340202),
- &#39;Osorio Georgina MD&#39;: (32.87708080000001, -117.2340202),
- &#39;University-California Library: Smith David Mitch MD&#39;: (32.87708080000001,
-  -117.2340202),
- &#39;University-California San Dego: Silverman Gregg MD&#39;: (32.87708080000001,
-  -117.2340202),
- &#39;Dr. Caitlin E. Carter, MD&#39;: (32.87708080000001, -117.2340202),
- &#39;Ward Suzanne F&#39;: (32.87708080000001, -117.2340202),
- &#39;Rosenblum Elizabeth MD&#39;: (32.87708080000001, -117.2340202),
- &#39;Cowgill Steven C MD&#39;: (32.87708080000001, -117.2340202),
- &#39;University-California Library: Zivin Justin Alle MD&#39;: (32.87708080000001,
-  -117.2340202),
- &#39;Irwin Abby M MD&#39;: (32.87708080000001, -117.2340202),
- &#39;Brenner David A MD&#39;: (32.87708080000001, -117.2340202),
- &#39;Ross Jr John MD&#39;: (32.87708080000001, -117.2340202),
- &#39;Bundens Warner P MD&#39;: (32.87708080000001, -117.2340202),
- &#39;Margolis David A MD&#39;: (32.87708080000001, -117.2340202),
- &#39;Puri Paul R MD&#39;: (32.87708080000001, -117.2340202),
- &#39;University-California Library: Zisook Sidney MD&#39;: (32.87708080000001,
-  -117.2340202),
- &#39;Park Daniel MD&#39;: (32.87708080000001, -117.2340202),
- &#39;Lane Thomas MD&#39;: (32.87708080000001, -117.2340202),
- &#39;Dr. Rosa M. Andrade, MD&#39;: (32.87708080000001, -117.2340202),
- &#39;Sharma Kumar MD&#39;: (32.87708080000001, -117.2340202),
- &#39;Hematology Oncology Clinic: Millard Frederick E MD&#39;: (32.87708080000001,
-  -117.2340202),
- &#39;Univ of Ca San Diego Med Center: Lanouette Nicole MD&#39;: (32.87708080000001,
-  -117.2340202),
- &#39;RIMAC Complex&#39;: (32.8851041, -117.24049769999999),
- &#39;UCSD Outback Climbing Center&#39;: (32.8804971, -117.2317617),
- &#39;Muir Gymnasium&#39;: (32.87714940000001, -117.2412479),
- &#39;Recreation Gymnasium&#39;: (32.876771999999995, -117.24129380000001),
- &#39;Spanos Athletic Performance Center, UCSD&#39;: (32.8898929, -117.24042150000001),
- &#39;WellStrong Fitness&#39;: (32.8913844, -117.2416612),
- &#39;Reverence Yoga&#39;: (32.87006950000001, -117.23339320000001),
- &#39;Mesa Nueva Pool&#39;: (32.875041100000004, -117.22314209999999),
- &#39;Pilates UTC San Diego | Pilates Studio La Jolla | SOULution Pilates&#39;: (32.8681532,
-  -117.2321801),
- &#39;Club Pilates&#39;: (32.86574529999999, -117.2317254),
- &#39;Exos Gym&#39;: (32.8923245, -117.2229605),
- &#39;The Fitness Guru&#39;: (32.8762158, -117.21817150000001),
- &#39;Campus Point Fitness Center&#39;: (32.8946125, -117.22421750000001),
- &#39;La Jolla Country Day School Gym&#39;: (32.877503499999996, -117.21740919999999),
- &#39;Shally Health Club&#39;: (32.8696115, -117.22105790000002),
- &#39;Friedenberg Olympic Pool&#39;: (32.8758403, -117.21625890000001),
- &#39;Басcейн&#39;: (32.865569300000004, -117.2245274),
- &#39;Shiley Sports &amp; Health Center&#39;: (32.900344, -117.24298600000002),
- &#39;San Diego Rhythms Rhythmic Gymnastics&#39;: (32.8756101, -117.21500390000001),
- &#39;Cassie Nevitt - Classical Pilates&#39;: (32.892257199999996,
-  -117.21757450000001),
- &#39;S6 Fitness&#39;: (32.892356899999996, -117.21762549999998),
- &#39;JCC Fitness, Gym, Pool &amp; Sports Leagues&#39;: (32.875465000000005, -117.214832),
- &#39;CrossFit Del Mar&#39;: (32.894515500000004, -117.21871090000002),
- &#39;Transform Training&#39;: (32.87032529999999, -117.21679089999999),
- &#39;Woodlands West II Tennis Courts&#39;: (32.860271999999995, -117.2317242),
- &#39;Siddha Yoga Meditation Center&#39;: (32.8956844, -117.2173146),
- &#39;CorePower Yoga&#39;: (32.8619299, -117.2245388),
- &#39;SoulCycle LAJO - La Jolla&#39;: (32.871814199999996, -117.21359309999998),
- &#39;SUJO&#39;: (32.868757099999996, -117.2150611),
- &#39;The Boxing Club Sport &amp; Fitness&#39;: (32.8682792, -117.21526329999999),
- &#39;Dan McKinney Family YMCA&#39;: (32.858495, -117.24261000000001),
- &#39;Curves&#39;: (32.900688800000005, -117.221916),
- &#39;Invictus Fitness Sorrento Valley&#39;: (32.9014889, -117.222123),
- &#39;24 Hour Fitness&#39;: (32.8710721, -117.21177220000001),
- &#39;Rush Cycle - Carmel Valley&#39;: (32.90503340000001, -117.2289521),
- &#39;Faith Fal Warrior&#39;: (32.8600022, -117.2546686),
- &#39;Torrey Pines Sports Club&#39;: (32.9070019, -117.24197520000001),
- &#39;FREE MOVEMENT&#39;: (32.8758655, -117.2068937),
- &#39;Health Hound Fitness&#39;: (32.8756285, -117.206942),
- &#39;1RM Performance&#39;: (32.9068463, -117.22706509999999),
- &#39;Rhinos Rugby Academy&#39;: (32.9068463, -117.22706509999999),
- &#39;MMA Academy&#39;: (32.904596399999996, -117.2212745),
- &#39;ClubRX&#39;: (32.90696399999999, -117.22691499999999),
- &#39;David Hall, MS&#39;: (32.9038512, -117.21933390000001),
- &#39;San Diego Sports Medicine Pilates Wellness&#39;: (32.90389199999999,
-  -117.219352),
- &#39;TRU Health &amp; Wellness&#39;: (32.9079167, -117.2287078),
- &#39;Fit For Life&#39;: (32.9045864, -117.2183138),
- &#39;Soleil Hepner, Yoga PsychoTherapy&#39;: (32.90982960000001, -117.2305761),
- &#39;The One Health Boutique&#39;: (32.866976, -117.206478),
- &#39;Beach Sunset Yoga Hawaii - in San Diego&#39;: (32.8562736, -117.2572222),
- &#39;yoga80 - Yoga San Diego&#39;: (32.91107710000001, -117.2315558),
- &#39;Body By Bodde&#39;: (32.8722495, -117.20295290000001),
- &#39;Full Spectrum Training&#39;: (32.911823999999996, -117.23298600000001),
- &#39;San Diego Fitness&#39;: (32.9052191, -117.2145031),
- &#39;Certified FitPro&#39;: (32.9052831, -117.21441180000001),
- &#39;High Voltage Fitness gym&#39;: (32.9124785, -117.2265726),
- &#39;MODAvate Center&#39;: (32.913755, -117.234329),
- &#39;Moda by Sofia LLC&#39;: (32.913755, -117.234329),
- &#39;American Specialty Health, Inc.&#39;: (32.8999647, -117.20587069999999),
- &#39;VA Medical Center - Oncology/Hematology&#39;: (32.875544, -117.23228300000001),
- &#39;Veterans Administration Medical Center&#39;: (32.8751299, -117.23238799999999),
- &#39;VHS Medical Center 1A Facility&#39;: (32.8751298, -117.23238810000001),
- &#39;VA Medical [WEST DIV] Center: La Jolla, California&#39;: (32.87474, -117.232243),
- &#39;Fresenius Medical Care at Va Medical Center San Diego Aphers&#39;: (32.87473900000001,
-  -117.232243),
- &#39;VA San Diego Healthcare System&#39;: (32.874676300000004, -117.2314596),
- &#39;Veterans Affairs Medical Center (VAMC)&#39;: (32.8744577, -117.23168159999999),
- &#34;La Jolla Women&#39;s Surgery Center&#34;: (32.883369099999996, -117.22654890000001),
- &#39;Genesis Urology - La Jolla&#39;: (32.883369099999996, -117.22654890000001),
- &#39;Perlman Clinic La Jolla&#39;: (32.8829119, -117.226421),
- &#39;Cardiac Arrhythmia Associates&#39;: (32.8829239, -117.22639850000002),
- &#39;Hospital Papa&#39;: (32.879558, -117.2264155),
- &#39;Girard Ortho&#39;: (32.8832652, -117.2262942),
- &#39;Olde Del Mar Surgical&#39;: (32.883012300000004, -117.22612340000002),
- &#39;Campus Point Patient &amp; Visitor Parking Structure&#39;: (32.8796196,
-  -117.2260533),
- &#39;San Diego Hospital&#39;: (32.878854800000006, -117.2259244),
- &#39;Sulpizio Cardiovascular Center at UC San Diego Health&#39;: (32.8788316,
-  -117.2258642),
- &#39;Sanford Stem Cell Clinical Center at UC San Diego Health&#39;: (32.8775024,
-  -117.2263648),
- &#39;ShopDoc&#39;: (32.8840701, -117.22583999999999),
- &#39;Dr K&#39;: (32.884073, -117.2258373),
- &#39;San Diego Gamma Knife Center&#39;: (32.88422339999999, -117.2258598),
- &#39;Ucsd Medical Group&#39;: (32.8783666, -117.2258412),
- &#39;Jacobs Medical Center/Thornton Hospital&#39;: (32.87818920000001, -117.2256936),
- &#39;UCSD Perlman Ambulatory Care Center&#39;: (32.8779117, -117.22566950000001),
- &#39;MINDFUL NEUROPSYCHOLOGY PROFESSIONAL CORPORATION&#39;: (32.8708575,
-  -117.2355648),
- &#39;Thornton Pavilion&#39;: (32.8779584, -117.2256247),
- &#39;Scripps Memorial Hospital La Jolla&#39;: (32.8849805, -117.22547820000001),
- &#39;Prebys Cardiovascular Institute&#39;: (32.8851544, -117.2255383),
- &#39;Scripps Memorial - Rady NICU&#39;: (32.88521550000001, -117.2252365),
- &#34;Scripps Memorial Hospital La Jolla - Center For Women&#39;s Health&#34;: (32.88521550000001,
-  -117.2252365),
- &#39;Jacobs Medical Center at UC San Diego Health&#39;: (32.8779842,
-  -117.22509620000001),
- &#39;Applied Psychometrics&#39;: (32.8708533, -117.232658),
- &#39;Medical Center Central Plant&#39;: (32.8772277, -117.22504479999999),
- &#39;Schaetzel Center&#39;: (32.884786600000005, -117.2246039),
- &#39;San Diego hospital&#39;: (32.8847696, -117.2245736),
- &#39;Thornton Pavilion station&#39;: (32.8795555, -117.2238368),
- &#39;Optimal Health and Prevention Research Foundation&#39;: (32.8935415,
-  -117.24175749999999),
- &#39;Moores Cancer Center at UC San Diego Health&#39;: (32.8785385,
-  -117.22271440000002),
- &#39;Chill&#39;: (32.8946842, -117.2413902),
- &#39;Restore SD Plastic Surgery&#39;: (32.8699767, -117.2278777),
- &#39;Scripps Health Corporate Office&#39;: (32.887577, -117.22250600000001),
- &#39;Alchma LLC&#39;: (32.8696343, -117.2276054),
- &#39;KOP Mammography&#39;: (32.8696343, -117.2276054),
- &#39;MBB2N&#39;: (32.8954497, -117.24254920000001),
- &#39;Abbasi Medical Corporation&#39;: (32.8753776, -117.22179440000001),
- &#39;UCSD Radiology at La Jolla&#39;: (32.8698445, -117.2262713),
- &#39;Emily Fenton Hunte Breast Care Center&#39;: (32.89694070000001,
-  -117.24247209999999),
- &#39;Scripps Green Hospital&#39;: (32.89718070000001, -117.24276),
- &#39;Dr. Adam Rosen&#39;: (32.8972329, -117.2428159),
- &#39;Fresenius Medical Care at Scripps Memorial Hospital La Jolla&#39;: (32.89824290000001,
-  -117.24289109999998),
- &#39;Scripps Clinic Torrey Pines&#39;: (32.89848130000001, -117.2428557),
- &#34;Children&#39;s Primary Care Medical Group Regents&#34;: (32.873217,
-  -117.21761200000002),
- &#39;Regents Medical Plaza&#39;: (32.8732043, -117.21760900000001),
- &#39;La Jolla Naval Hospital&#39;: (32.8717938, -117.2177712),
- &#39;Kaizen Brain Center&#39;: (32.872481, -117.216856),
- &#39;Integral Medical Group Inc&#39;: (32.8738099, -117.2156652),
- &#39;SuddenLife&#39;: (32.87356380000001, -117.2150185),
- &#39;Sothema Labs USA&#39;: (32.87362889999999, -117.21489550000001),
- &#39;Botox San Diego&#39;: (32.875663, -117.21336470000001),
- &#39;Dogg House&#39;: (32.877806199999995, -117.23326609999998),
- &#39;La Jolla Village Dry Cleaners and Tailors&#39;: (32.8658022,
-  -117.23201200000001),
- &#39;Carpet Corps&#39;: (32.87107199999999, -117.222421),
- &#39;Flood Response&#39;: (32.875792800000006, -117.21788629999999),
- &#39;Escondido Carpet Pros&#39;: (32.8706967, -117.2173949),
- &#39;SD Green Clean&#39;: (32.873541499999995, -117.21499409999998),
- &#39;Colony Cleaners&#39;: (32.8626061, -117.2242222),
- &#39;La Jolla Cleaners&#39;: (32.8673172, -117.2156342),
- &#39;The Maids&#39;: (32.900788899999995, -117.22202949999999),
- &#39;JAN-PRO of San Diego&#39;: (32.903874, -117.215162),
- &#39;MNM Carpet Cleaning&#39;: (32.873399199999994, -117.2030282),
- &#39;Soap Box&#39;: (32.8732198, -117.20299229999999),
- &#39;North Coast Cleaners&#39;: (32.866892, -117.20602620000001),
- &#39;Crossroads Cleaners&#39;: (32.872552299999995, -117.2031183),
- &#39;Speedy Carpet Cleaners&#39;: (32.8941402, -117.2010689),
- &#39;University city cleaners&#39;: (32.8523234, -117.21587379999998),
- &#39;Carpet Cleaning Champs&#39;: (32.9007925, -117.20352720000001),
- &#39;Distinctive Cleaners&#39;: (32.8536452, -117.20228390000001),
- &#39;U-City Coin Wash&#39;: (32.853450300000006, -117.20246929999999),
- &#39;Fairlane Cleaners&#39;: (32.9006544, -117.19296670000001),
- &#39;Torrey Hills Cleaners&#39;: (32.92035800000001, -117.213904),
- &#34;Tony&#39;s Best Way&#34;: (32.84722, -117.27333),
- &#39;Quick-Dry Flood &amp; Mold Spec&#39;: (32.84722, -117.27333),
- &#39;Republic Master Chefs&#39;: (32.9030339, -117.1892453),
- &#39;Taba Rug Gallery&#39;: (32.8459463, -117.27449409999998),
- &#39;Silverado Cleaners&#39;: (32.844844, -117.27450900000001),
- &#39;Persian Rug Bazaar&#39;: (32.84260519999999, -117.27252340000001),
- &#39;Maroufi Fine Rugs &amp; Antiques&#39;: (32.8427297, -117.27297949999999),
- &#39;Quality Cleaners&#39;: (32.8410673, -117.27238759999999),
- &#39;Ocean Dry Cleaners&#39;: (32.8408192, -117.2733497),
- &#39;MY SAN DIEGO CARPET CLEANING&#39;: (32.8549578, -117.186559),
- &#34;Ogden&#39;s One Hour Cleaners&#34;: (32.840272999999996, -117.2726918),
- &#39;Servpro of Sorrento Valley&#39;: (32.89895099999999, -117.180074),
- &#39;ALL IN ONE&#39;: (32.840627399999995, -117.27550349999999),
- &#39;Superior Carpet &amp; Floor Cleaning&#39;: (32.83020249999999, -117.22495890000002),
- &#39;Personalized Building Services&#39;: (32.898024, -117.17851920000001),
- &#34;Margaret&#39;s Cleaners&#34;: (32.8395038, -117.2783084),
- &#39;Corporal Building Services Inc&#39;: (32.8797175, -117.1730501),
- &#39;Pearl Street Cleaners&#39;: (32.8392866, -117.2788476),
- &#39;Chem-Dry Magic Bubbles&#39;: (32.828734000000004, -117.22098999999999),
- &#39;Coastal Chem Dry&#39;: (32.8272468, -117.2301686),
- &#39;Ace Janitorial Services, Inc.&#39;: (32.827151199999996, -117.23017620000002),
- &#39;San Diego Best Carpet Care&#39;: (32.8299089, -117.21480179999999),
- &#39;L and L Carpet Care&#39;: (32.832572, -117.20564399999999),
- &#39;Legacy Cleaners&#39;: (32.93727570000001, -117.23115590000002),
- &#39;Expert Cleaners&#39;: (32.9078043, -117.17651599999999),
- &#39;Beasley Cleaners&#39;: (32.93962560000001, -117.231532),
- &#39;Sta-Fresh Carpet Cleaners&#39;: (32.8341956, -117.1967381),
- &#39;Carmel Valley Aztech Cleaning Services&#39;: (32.9398655, -117.2312263),
- &#34;Lele&#39;s Cleaners Inc&#34;: (32.8343127, -117.19558899999998),
- &#39;Guzman Cleaners&#39;: (32.83419199999999, -117.195609),
- &#39;R &amp; M Chem-Dry&#39;: (32.905972999999996, -117.17252069999999),
- &#39;San Diego Suds&#39;: (32.8353498, -117.1894659),
- &#39;The Business Cleaning Company Inc.&#39;: (32.885218, -117.16456399999998),
- &#39;Coin Laundry&#39;: (32.834657899999996, -117.18960459999998),
- &#39;Melnick Carpet Cleaning&#39;: (32.8368002, -117.1856845),
- &#39;AAA Floormaster&#39;: (32.8899685, -117.16310520000002),
- &#39;MSC Janitorial Service Inc&#39;: (32.889078000000005, -117.161998),
- &#39;Rainbow International of City Coastal&#39;: (32.8181, -117.22401470000001),
- &#39;San Diego Rug Cleaning &amp; Repair&#39;: (32.880596999999995, -117.160579),
- &#39;Library Returns Drop Off Box&#39;: (32.8811083, -117.23757320000001),
- &#39;Special Collections Library&#39;: (32.8811083, -117.23757320000001),
- &#39;Geisel Library&#39;: (32.88115069999999, -117.2374497),
- &#39;University-California Library&#39;: (32.881143400000006, -117.2373076),
- &#39;Snake Path&#39;: (32.8810648, -117.2366202),
- &#39;Darkstar Science Fiction/Fantasy Library&#39;: (32.876924, -117.24006399999999),
- &#39;University-California Library: Gaspar Judith A&#39;: (32.87708080000001,
-  -117.2340202),
- &#34;University-California Library: O&#39;Meara Bonnie S&#34;: (32.8755653,
-  -117.23542830000001),
- &#39;UCSD Biomedical Library&#39;: (32.875261, -117.2368956),
- &#39;Zenobia Fragments&#39;: (32.8938841, -117.2360709),
- &#39;Kresge Library, The Scripps Research Institute&#39;: (32.896353999999995,
-  -117.242516),
- &#39;Southwest Fisheries Sci Library&#39;: (32.870458299999996, -117.25087959999999),
- &#39;Mesa Apartment 24/7 Study Room&#39;: (32.872313500000004, -117.2198815),
- &#39;Astor Judaica Library&#39;: (32.8756101, -117.21500390000001),
- &#39;Napster Inc&#39;: (32.8977556, -117.21633759999999),
- &#39;Braille Institute - San Diego&#39;: (32.8759178, -117.20923970000001),
- &#39;InFarmatik&#39;: (32.91331339999999, -117.23098940000001),
- &#39;cvparkour&#39;: (32.91343940000001, -117.23187150000001),
- &#39;Alliance Francaise de San Diego&#39;: (32.9007925, -117.20352720000001),
- &#39;North University Community Branch Library&#39;: (32.86748, -117.199133),
- &#39;University Community Branch Library&#39;: (32.8541654, -117.20106299999999),
- &#39;Fortuna Classical Music&#39;: (32.880188800000006, -117.18359),
- &#39;Athenaeum Music &amp; Arts Library&#39;: (32.84696390000001, -117.2741933),
- &#39;Kinsella Library&#39;: (32.8442602, -117.2714731),
- &#39;La Jolla Riford Library&#39;: (32.8408017, -117.2761075),
- &#39;North Clairemont Library&#39;: (32.828367300000004, -117.2065043),
- &#39;Corner Garden Little Free Library&#39;: (32.836124600000005, -117.1850872),
- &#39;Little Free Library on Mango&#39;: (32.9455736, -117.2459768),
- &#39;Spirits of St Germain Liquors&#39;: (32.8699989, -117.23272250000001),
- &#34;Trader Joe&#39;s&#34;: (32.86574529999999, -117.2317254),
- &#39;Keg N Bottle - Sorrento Valley&#39;: (32.8937563, -117.20293799999999),
- &#39;Bodega Wine &amp; Spirits&#39;: (32.8520219, -117.21448889999999),
- &#39;PRP Wine International&#39;: (32.8991055, -117.1963877),
- &#39;Courtesy Liquors&#39;: (32.8536449, -117.2035925),
- &#39;Starshine Liquor Market&#39;: (32.8358887, -117.22277290000001),
- &#39;Keg N Bottle - La Jolla&#39;: (32.8427287, -117.27243419999999),
- &#39;WineSellar Wine Shop&#39;: (32.9035838, -117.1831814),
- &#39;The WineSellar &amp; Brasserie&#39;: (32.903599, -117.183097),
- &#39;BevMo!&#39;: (32.8403827, -117.2740732),
- &#39;Little Tiger Imports&#39;: (32.838404600000004, -117.27142350000001),
- &#34;Dick&#39;s Liquor&#34;: (32.8397788, -117.2750514),
- &#39;Wine Time&#39;: (32.83878809999999, -117.2787485),
- &#39;Galleria Liquor&#39;: (32.87899640000001, -117.1688463),
- &#39;Vintage Wine&#39;: (32.8790992, -117.1677935),
- &#39;Liquor Box&#39;: (32.8323358, -117.27705559999998),
- &#39;Plaza Wine &amp; Spirit&#39;: (32.9059881, -117.1728582),
- &#39;32 North Brewing Co.&#39;: (32.882678000000006, -117.164818),
- &#39;Diane Liquor&#39;: (32.8354067, -117.18936470000001),
- &#39;R J Liquor&#39;: (32.823211900000004, -117.2141027),
- &#39;San Diego Wine &amp; Beer Co.&#39;: (32.8794982, -117.16331170000001),
- &#39;Junior Liquor&#39;: (32.8352287, -117.1868504),
- &#39;Passport Acceptance Office&#39;: (32.8819927, -117.2293827),
- &#39;Pasha Housing&#39;: (32.866201000000004, -117.23597600000001),
- &#39;California DMV Now Kiosk&#39;: (32.8660688, -117.2319045),
- &#39;Onaka Planning &amp; Economics&#39;: (32.8644202, -117.24496040000001),
- &#39;Admiral Housing Corporation&#39;: (32.8896963, -117.1627058),
- &#39;Kevin Buckley | San Diego Patent Attorney&#39;: (32.874541, -117.21494399999999),
- &#39;S Housing&#39;: (32.866648, -117.2192261),
- &#39;Scott Peters For City Council&#39;: (32.8755918, -117.2120898),
- &#39;Nimbus One&#39;: (32.875312, -117.21216799999999),
- &#39;US Food &amp; Drug Administration&#39;: (32.87615829999999, -117.21086470000002),
- &#39;XM&#39;: (32.891464, -117.20096000000001),
- &#39;Corp Espress Housing&#39;: (32.856342, -117.2075695),
- &#39;Ormsby Construction&#39;: (32.848857, -117.21427),
- &#39;Vistant Corporation&#39;: (32.9217278, -117.2332635),
- &#39;Financial Auditing Center, (Formerly DDSFAC)&#39;: (32.9000497, -117.1902808),
- &#39;San Diego Patent Attorneys - Bold Patents Law Firm&#39;: (32.9002396,
-  -117.19036609999999),
- &#39;TaxConnections Inc.&#39;: (32.84744200000001, -117.27243600000001),
- &#39;San Diego Tax Law Group&#39;: (32.92853279999999, -117.2390386),
- &#39;The Maxham Firm&#39;: (32.92892560000001, -117.2386001),
- &#39;Colonial Garage Smog, Registration Service &amp; Auto Repair - La Jolla DMV&#39;: (32.8432118,
-  -117.2723047),
- &#39;SKB Law&#39;: (32.856893, -117.1859139),
- &#39;San Diego Data Processing Corporation&#39;: (32.831639, -117.23147),
- &#39;Fast and Easy Traffic School&#39;: (32.8418682, -117.2744527),
- &#39;Legal Passport at PostalAnnex+ of La Jolla&#39;: (32.840793, -117.2731561),
- &#39;San Diego Personnel&#39;: (32.854621, -117.18471029999999),
- &#39;American Weights &amp; Measures&#39;: (32.8990578, -117.1778172),
- &#39;Ez Fast Fun Traffic School&#39;: (32.827151199999996, -117.23017620000002),
- &#39;#9565 - La Jolla Coastal Classic Six-Bedroom Holiday Home&#39;: (32.8804636,
-  -117.24606920000001),
- &#39;Spectacular $12Mill Beach Mansion-Clear Ocean View&#39;: (32.88231669999999,
-  -117.2478888),
- &#39;BNB&#39;: (32.8733294, -117.2448492),
- &#39;Residence Inn by Marriott San Diego La Jolla&#39;: (32.8701284,
-  -117.23719979999998),
- &#39;Sheraton La Jolla Hotel&#39;: (32.8707798, -117.2319236),
- &#39;Sumner Canyon&#39;: (32.87417069999999, -117.2514183),
- &#39;Advent Hotel Management Corporation&#39;: (32.8707505, -117.2272915),
- &#39;Citizens Trail&#39;: (32.887754, -117.252875),
- &#39;Hyatt Regency La Jolla At Aventine&#39;: (32.870618900000004, -117.2254923),
- &#39;La Jolla Vista&#39;: (32.88171189999999, -117.21884979999999),
- &#39;US Suites Inc&#39;: (32.874093699999996, -117.21778970000001),
- &#39;Luxurious La Jolla Loft&#39;: (32.8696115, -117.22105790000002),
- &#39;Pasha Corporate Housing&#39;: (32.874477, -117.21731000000001),
- &#39;Indian Canyon&#39;: (32.895976399999995, -117.25293740000001),
- &#39;America Suite&#39;: (32.8738885, -117.2164412),
- &#39;#8588 - Slice of Paradise Five-Bedroom Holiday Home&#39;: (32.8629458,
-  -117.2452114),
- &#39;San Diego Marriott La Jolla&#39;: (32.873131, -117.215772),
- &#39;SuiteAmerica San Diego Office&#39;: (32.894962, -117.21873000000001),
- &#39;Hilton La Jolla Torrey Pines&#39;: (32.9017901, -117.24380049999999),
- &#39;#8425 - Endless Vistas Six-Bedroom Holiday Home&#39;: (32.8599054,
-  -117.23957970000001),
- &#39;reeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee&#39;: (32.8646602, -117.2194022),
- &#39;#8519 - One and Only Five-Bedroom Holiday Home&#39;: (32.8623047, -117.253294),
- &#39;The Lodge at Torrey Pines&#39;: (32.904150800000004, -117.24463770000001),
- &#39;Fairmont Grand Del Mar&#39;: (32.877923100000004, -117.21007879999999),
- &#39;La Jolla Shores Luxury 4 Bedrooms 3 Bathrooms Residence&#39;: (32.86, -117.2538),
- &#39;Kimpton hotel san diego&#39;: (32.87144279999999, -117.20975520000002),
- &#39;Hilton Hotel&#39;: (32.8744875, -117.20830910000001),
- &#39;Embassy Suites by Hilton San Diego La Jolla&#39;: (32.874506, -117.2082297),
- &#39;Ints-Suites&#39;: (32.8744222, -117.2069794),
- &#39;#8230 - Luxury by the Sea Five-Bedroom Holiday Home&#39;: (32.855843300000004,
-  -117.2471791),
- &#39;#8321 - Hacienda by the Sea Five-Bedroom Holiday Home&#39;: (32.8574088,
-  -117.25519240000001),
- &#39;#8276 - Sunshine at The Shores Three-Bedroom Holiday Home&#39;: (32.856737,
-  -117.25484569999999),
- &#39;#2312 - Playa La Jolla Four-Bedroom Holiday Home&#39;: (32.855542699999994,
-  -117.2527947),
- &#39;#8080 - SeaView Sanctuary Five-Bedroom Holiday Home&#39;: (32.852628,
-  -117.24002),
- &#39;#2301 - Sweet Escape Four-Bedroom Holiday Home&#39;: (32.8555315, -117.253247),
- &#39;La Jolla Shores Beach&#39;: (32.8571309, -117.2572515),
- &#39;#8156 - Piece of Paradise in the Shores Three-Bedroom Holiday Home&#39;: (32.855005199999994,
-  -117.25496310000001),
- &#39;La Jolla Shores Rentals&#39;: (32.8540387, -117.25503870000001),
- &#39;#8038 - La Jolla Shores Beach Bungalow III One-Bedroom Apartment&#39;: (32.853159999999995,
-  -117.254195),
- &#39;La Jolla Shores Hotel&#39;: (32.8549788, -117.25815559999998),
- &#39;Courtyard by Marriott San Diego Sorrento Valley&#39;: (32.89550309999999,
-  -117.20361729999999),
- &#39;Hotel La Jolla, Curio Collection by Hilton&#39;: (32.8511848,
-  -117.25324590000001),
- &#39;La Jolla Riviera Inn&#39;: (32.85219910000001, -117.257076),
- &#39;#7934A - Shores Perfection I Four-Bedroom Holiday Home&#39;: (32.8511147,
-  -117.2548665),
- &#39;#7712 - Heavenly Hillside Hideaway Six-Bedroom Holiday Home&#39;: (32.8482452,
-  -117.24369080000001),
- &#39;Modern Tropical Canyon Getaway&#39;: (32.8535415, -117.214749),
- &#39;La Jolla Beach &amp; Tennis Club&#39;: (32.852532000000004, -117.258967),
- &#39;Awesomesaucebeachhouse V&#39;: (32.849777, -117.25571210000001),
- &#39;Homewood Suites by Hilton San Diego-Del Mar&#39;: (32.916593400000004,
-  -117.2289571),
- &#39;#7950 - Cottage by the Sea Five-Bedroom Holiday Home&#39;: (32.8508848,
-  -117.2602544),
- &#39;Hilton Garden Inn San Diego Del Mar&#39;: (32.917107300000005,
-  -117.22879979999999),
- &#39;#7910 - Vintage Cottage Two-Bedroom Holiday Home&#39;: (32.8503799,
-  -117.2606263),
- &#39;#7931 - Lookout over Paradise Four-Bedroom Holiday Home&#39;: (32.84975300000001,
-  -117.26259399999999),
- &#39;#7930 - Cove Retreat Three-Bedroom Holiday Home&#39;: (32.8494264,
-  -117.26293000000001),
- &#39;Holiday Inn Express &amp; Suites San Diego-Sorrento Valley&#39;: (32.8970945,
-  -117.19354369999999),
- &#39;Country Inn &amp; Suites by Radisson, San Diego North, CA&#39;: (32.8980607,
-  -117.19254609999999),
- &#39;#1712 - Stunning Sunsets Six-Bedroom Holiday Home&#39;: (32.8447864,
-  -117.26150120000001),
- &#39;#1954 - La Jolla Ocean Views Six-Bedroom Holiday Home&#39;: (32.8411081,
-  -117.2535335),
- &#39;Hyatt House San Diego/Sorrento Mesa&#39;: (32.89904310000001,
-  -117.19149650000001),
- &#39;Stuart Collection&#39;: (32.8781795, -117.23416680000001),
- &#39;비치 아쿠아리움&#39;: (32.865775899999996, -117.25064340000002),
- &#39;Qualcomm Museum&#39;: (32.8959644, -117.19583840000001),
- &#39;Claims Office&#39;: (32.8927477, -117.1879623),
- &#39;The Map &amp; Atlas Museum of La Jolla&#39;: (32.8452198, -117.27485490000001),
- &#39;La Jolla Historical Society Wisteria Cottage Museum&#39;: (32.84512099999999,
-  -117.27727),
- &#39;Nautical History Gallery &amp; Museum&#39;: (32.840796399999995, -117.2720966),
- &#39;Museum of Contemporary Art San Diego&#39;: (32.8445066, -117.2781915),
- &#39;Favorite color wall mural&#39;: (32.827191, -117.253882),
- &#39;QMSI recycle green&#39;: (32.880288300000004, -117.1664071),
- &#39;Quint Gallery&#39;: (32.82144900000001, -117.227501),
- &#39;Gregory Reade Sculpture&#39;: (32.817962800000004, -117.22383049999999),
- &#39;Warren Mall&#39;: (32.881153000000005, -117.23484950000001),
- &#39;Matthews Quad&#39;: (32.87891810000001, -117.2353218),
- &#39;Elliott Chaparral Reserve&#39;: (32.875592600000004, -117.23543020000001),
- &#39;Challenge Course&#39;: (32.8883139, -117.23724809999999),
- &#39;Blacks Beach Trailhead&#39;: (32.8800989, -117.24696259999999),
- &#39;Throwing Field&#39;: (32.8894481, -117.24161540000001),
- &#39;Roger’s Community Garden&#39;: (32.872896600000004, -117.23935139999999),
- &#39;Scripps Coastal Reserve Biodiversity Trail&#39;: (32.8758479,
-  -117.24600759999998),
- &#39;Ho Chi Minh Trail Head La Jolla&#39;: (32.8851641, -117.24918000000001),
- &#39;Scripps Coastal Reserve&#39;: (32.8756767, -117.24880279999999),
- &#39;Salk Institute Beach trail&#39;: (32.8854422, -117.2508061),
- &#39;La Jolla Trail&#39;: (32.88510049999999, -117.25167809999999),
- &#39;Saigon Trail&#39;: (32.883763300000005, -117.25231809999998),
- &#39;Black beach lookout&#39;: (32.88906740000001, -117.252183),
- &#39;Allen Field&#39;: (32.8679039, -117.24345120000001),
- &#39;Scripps Coastal Meander Trailhead&#39;: (32.8707582, -117.2515905),
- &#39;Mandell-Weiss Eastgate City Park&#39;: (32.87605389999999, -117.2170858),
- &#39;Secret Route To Sorrento Valley&#39;: (32.881508000000004, -117.21544409999998),
- &#39;Pawka Green&#39;: (32.8649271, -117.25374120000001),
- &#39;La Jolla Colony Park&#39;: (32.86190489999999, -117.2273757),
- &#39;Doyle Community Park&#39;: (32.864630600000005, -117.220858),
- &#39;Torrey Pines Elementary School Trailhead&#39;: (32.8594287, -117.24214099999999),
- &#39;Backyard X-Scapes&#39;: (32.900409, -117.22181699999999),
- &#39;Art Thatch&#39;: (32.900414000000005, -117.22156399999999),
- &#39;Villa La Jolla Park&#39;: (32.857467699999994, -117.23462679999999),
- &#39;Doyle Dog Park&#39;: (32.86432140000001, -117.21714569999999),
- &#39;Cliffridge Park&#39;: (32.857407300000006, -117.2444632),
- &#39;UTC Mall dog park&#39;: (32.87020529999999, -117.2106487),
- &#39;Genesee Highlands Park&#39;: (32.8627468, -117.2150773),
- &#39;La Jolla Shores Park&#39;: (32.8589947, -117.2557447),
- &#39;Camp Run-A-Mutt, Sorrento Valley&#39;: (32.90976299999999, -117.23076),
- &#39;North End Blacks Beach&#39;: (32.9064632, -117.25576219999999),
- &#39;Kellogg Park&#39;: (32.856256699999996, -117.2572624),
- &#39;Rose Canyon Trailhead&#39;: (32.8551387, -117.2178993),
- &#39;Rose Canyon Open Space Park&#39;: (32.855234100000004, -117.21761540000001),
- &#39;Coast View Park&#39;: (32.9116614, -117.22535790000002),
- &#39;Rose Canyon Open Space Park Hiking&#39;: (32.86035549999999, -117.2088044),
- &#39;South Fork Trailhead&#39;: (32.9142813, -117.24622179999999),
- &#39;Coastal Sage Habitat Interpretive Trail&#39;: (32.8495119, -117.2237898),
- &#39;San Diego - La Jolla Underwater Park&#39;: (32.8529349, -117.26201699999999),
- &#39;North Fork Trailhead&#39;: (32.9162835, -117.2478),
- &#34;Dragon&#39;s Backbone Trailhead&#34;: (32.9129685, -117.21674540000001),
- &#39;Parking Los Penasquitos Canyon Preserve&#39;: (32.9065222, -117.206659),
- &#39;Nobel Leash-Free Park&#39;: (32.86727190000001, -117.19806709999999),
- &#39;Penasquitos Canyon West Entrance&#39;: (32.906521600000005, -117.20640490000001),
- &#39;Los Penasquitos Trail Head (west)&#39;: (32.9064876, -117.20610740000001),
- &#39;Torrey Pines State Reserve&#39;: (32.91656039999999, -117.24957490000001),
- &#39;Rancho Penasquitos Trail Head West&#39;: (32.9064909, -117.206029),
- &#39;Standley Recreation Center&#39;: (32.8511678, -117.2102771),
- &#39;Marcy Park&#39;: (32.84455730000001, -117.22627320000001),
- &#39;Torrey Hills Park&#39;: (32.9175978, -117.2227477),
- &#39;Rose Canyon&#39;: (32.8405472, -117.24047549999999),
- &#39;Pacific Corporate Park&#39;: (32.8943613, -117.19059070000002),
- &#39;Mt. Soledad National Veterans Cemetary&#39;: (32.84004249999999, -117.2450298),
- &#39;Mt. Soledad National Veterans Memorial&#39;: (32.83980909999999, -117.2447094),
- &#39;Tide Pool&#39;: (32.851025199999995, -117.27293159999999),
- &#39;South Boundary Of Matlahuayl MPA&#39;: (32.8511167, -117.27333329999999),
- &#39;La Jolla Natural Park&#39;: (32.842633899999996, -117.2600372),
- &#39;Rental car&#39;: (32.848335, -117.27119499999999),
- &#39;Torrey Hills Dog Park&#39;: (32.920048699999995, -117.2129297),
- &#39;Lot P503&#39;: (32.8823006, -117.2357213),
- &#39;Lot P308&#39;: (32.882340299999996, -117.2399618),
- &#39;Hopkins Parking Structure&#39;: (32.8835963, -117.2397618),
- &#39;Lot P206&#39;: (32.87914850000001, -117.2401206),
- &#39;Lot P207&#39;: (32.880468699999994, -117.2413398),
- &#39;Lot P502&#39;: (32.8836621, -117.23495120000001),
- &#34;Thurgood Marshall Provost&#39;s Lot&#34;: (32.881334700000004, -117.2418567),
- &#39;Lot P302&#39;: (32.881274, -117.2420747),
- &#39;Lot P508&#39;: (32.880315700000004, -117.2334851),
- &#39;Lot P303&#39;: (32.88160330000001, -117.24271409999999),
- &#39;Lot P304&#39;: (32.8825082, -117.24271770000001),
- &#39;Lot P208&#39;: (32.8805694, -117.2429933),
- &#39;Gymnasium Lot, Scholars Lane&#39;: (32.8775952, -117.24143159999998),
- &#39;Gilman Parking Structure&#39;: (32.87737739999999, -117.23385259999998),
- &#39;Lot P602&#39;: (32.876719699999995, -117.2350928),
- &#39;Lot P113&#39;: (32.876464799999994, -117.23968070000001),
- &#39;Pangea Parking Structure&#39;: (32.8842556, -117.24310619999999),
- &#39;P406&#39;: (32.8770484, -117.23253229999999),
- &#39;Lot P510&#39;: (32.8815467, -117.23000990000001),
- &#39;Lot P351&#39;: (32.88727369999999, -117.2420118),
- &#39;Lot P101&#39;: (32.875500699999996, -117.24271770000001),
- &#39;Lot P401&#39;: (32.879463, -117.22930500000001),
- &#39;Lot P406&#39;: (32.8766518, -117.2309678),
- &#39;Lot P604&#39;: (32.8740069, -117.23693020000002),
- &#39;Lot P701&#39;: (32.88113790000001, -117.2273757),
- &#39;Lot P103&#39;: (32.8728164, -117.2423503),
- &#39;Parking C&#39;: (32.8840502, -117.2267517),
- &#39;UCSD Parking Lot 103&#39;: (32.872655800000004, -117.2425304),
- &#39;Parking Lot C&#39;: (32.8841015, -117.22660819999999),
- &#39;Lot P102&#39;: (32.8719752, -117.24280959999999),
- &#39;Parking Structure 507&#39;: (32.8916767, -117.242534),
- &#39;Scripps South Employee Parking Lot&#39;: (32.8925465, -117.2398699),
- &#39;Lot P751&#39;: (32.87913140000001, -117.2242473),
- &#39;Lot P702&#39;: (32.881674, -117.22370079999999),
- &#39;3299 Holiday Ct Parking&#39;: (32.870225, -117.23205759999999),
- &#39;Lot P760&#39;: (32.8803028, -117.2225983),
- &#39;One Miramar Street Parking Garage&#39;: (32.8737046, -117.2253399),
- &#39;Lot P756&#39;: (32.879171299999996, -117.2218633),
- &#39;Athena Parking Structure&#39;: (32.8792743, -117.22177140000001),
- &#39;Lot P783&#39;: (32.87633119999999, -117.2225064),
- &#39;Lot P761&#39;: (32.8779705, -117.22177140000001),
- &#39;Ace Parking&#39;: (32.871365000000004, -117.22545500000001),
- &#39;Premium Parking - P1365&#39;: (32.870233299999995, -117.2260707),
- &#39;Hyatt Regency La Jolla Valet&#39;: (32.870618900000004, -117.2254923),
- &#39;Hyatt Regency La Jolla Self&#39;: (32.870618900000004, -117.2254923),
- &#39;3636 Nobel Dr Parking&#39;: (32.868825300000005, -117.22791129999999),
- &#39;Regents Road Northeast Lot&#39;: (32.8808841, -117.21922990000002),
- &#39;10670 John J Hopkins Dr Parking&#39;: (32.8969506, -117.2406748),
- &#39;3655 Nobel Dr Parking&#39;: (32.868041999999996, -117.2276774),
- &#39;Lot P781&#39;: (32.8779028, -117.21885690000002),
- &#39;Nierenberg Hall Lot&#39;: (32.8695613, -117.2512124),
- &#39;Lot P782&#39;: (32.8760051, -117.2188537),
- &#39;10701-10999 John Jay Hopkins Dr Parking&#39;: (32.898642200000005,
-  -117.24121059999999),
- &#39;Blacks Beach Park&#39;: (32.8947899, -117.2516524),
- &#39;DSDP Lot&#39;: (32.86745690000001, -117.25135130000001),
- &#39;Aquarium Visitor Lot&#39;: (32.86514009999999, -117.24832140000001),
- &#39;Joseph D. MA, PharmD&#39;: (32.8752008, -117.2358106),
- &#39;Sarah E. McBane, PharmD&#39;: (32.8752008, -117.2358106),
- &#39;Outpatient Pharmacy&#39;: (32.875231199999995, -117.23255359999999),
- &#39;Benjamin R. Dishman, BS&#39;: (32.8749458, -117.2322794),
- &#39;Helen K. Park, PharmD&#39;: (32.8749458, -117.2322794),
- &#39;Scott T. Johns, PharmD&#39;: (32.8749458, -117.2322794),
- &#39;Tina M. La, Pharm&#39;: (32.8749458, -117.2322794),
- &#39;Melissa K. Egan, PharmD&#39;: (32.8749458, -117.2322794),
- &#39;Doreen Gousset, PharmD&#39;: (32.8749458, -117.2322794),
- &#39;Candace A. Eacker, Pharm&#39;: (32.8749458, -117.2322794),
- &#39;Vahid Naini, PharmD&#39;: (32.8749458, -117.2322794),
- &#39;Brian K. Plowman, PharmD&#39;: (32.8749458, -117.2322794),
- &#39;Christie Tran, PharmD&#39;: (32.8749458, -117.2322794),
- &#39;Soohyun C. Lee, PharmD&#39;: (32.8749458, -117.2322794),
- &#39;Lawrence A. Zelman, PharmD&#39;: (32.8749458, -117.2322794),
- &#39;Yelena M. Itkin, Pharm&#39;: (32.8749458, -117.2322794),
- &#39;Belinda J. Martinez, PharmD&#39;: (32.8749458, -117.2322794),
- ...}</pre>
+ &#39;San Diego Center-Jewish Comm&#39;: (32.8757165, -117.2153504),
+ &#39;Gotthelf Art Gallery&#39;: (32.87561000000001, -117.215004)}</pre>
 </div>
 
 </div>
@@ -13391,7 +12075,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">location</span><span class="p">(</span><span class="n">place_name</span><span class="p">):</span>
@@ -13410,7 +12094,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">group_by_centroid</span><span class="p">(</span><span class="n">places</span><span class="p">,</span> <span class="n">centroids</span><span class="p">):</span>
@@ -13434,7 +12118,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">find_centroid</span><span class="p">(</span><span class="n">cluster</span><span class="p">):</span>
@@ -13453,11 +12137,17 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">k_means</span><span class="p">(</span><span class="n">places</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">max_updates</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Use k-means to group restaurants by location into k clusters.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Uses the k-means algorithm to group places into k clusters</span>
+<span class="sd">    :param places: a sequence of places</span>
+<span class="sd">    :param k: amount of clusters to group places into</span>
+<span class="sd">    :param max_updates: maximum number of centroid updates allowed</span>
+<span class="sd">    :return: k number of centroids represented as a tuple of longitude and latitude</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">places</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">k</span><span class="p">,</span> <span class="s1">&#39;Not enough restaurants to cluster&#39;</span>
     
     <span class="n">old_centroids</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="p">[],</span> <span class="mi">0</span>
@@ -13478,7 +12168,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">centroids</span> <span class="o">=</span> <span class="n">k_means</span><span class="p">(</span><span class="n">places</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
@@ -13499,34 +12189,30 @@ div#notebook {
 
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>C:\Users\tanve\Anaconda3\lib\site-packages\ipykernel_launcher.py:6: DeprecationWarning: This function is deprecated. Please call randint(0, 1288 + 1) instead
-  
-C:\Users\tanve\Anaconda3\lib\site-packages\numpy\core\fromnumeric.py:2957: RuntimeWarning: Mean of empty slice.
-  out=out, **kwargs)
-C:\Users\tanve\Anaconda3\lib\site-packages\numpy\core\_methods.py:80: RuntimeWarning: invalid value encountered in double_scalars
-  ret = ret.dtype.type(ret / rcount)
+<pre>C:\Users\tanve\Anaconda3\lib\site-packages\ipykernel_launcher.py:12: DeprecationWarning: This function is deprecated. Please call randint(0, 1345 + 1) instead
+  if sys.path[0] == &#39;&#39;:
 </pre>
 </div>
 </div>
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[8]:</div>
+<div class="prompt output_prompt">Out[12]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>[(32.846640265, -117.267924505625),
- (32.871520821686744, -117.21525358032127),
- (32.858495490909085, -117.20443320454547),
- (32.883971808510644, -117.22346975851067),
- (32.900021818840585, -117.19033939130432),
- (32.83039946585366, -117.2107857292683),
- (32.908157848181816, -117.23281771272727),
- (32.87558200434783, -117.23662421449274),
- (nan, nan),
- (32.881940756410245, -117.17290841794872)]</pre>
+<pre>[(32.87260329361702, -117.23244322462006),
+ (32.90002181884058, -117.19033939130433),
+ (32.856135267164184, -117.25215054029852),
+ (32.88284068087649, -117.23993077370518),
+ (32.88350348061225, -117.22318163877554),
+ (32.83127318604651, -117.21116917906978),
+ (32.8700348699187, -117.21227528414632),
+ (32.87937693953488, -117.1737037046512),
+ (32.84494836837607, -117.27318162991453),
+ (32.91224888674698, -117.22985600120482)]</pre>
 </div>
 
 </div>
