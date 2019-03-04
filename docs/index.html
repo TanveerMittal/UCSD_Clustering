@@ -11775,7 +11775,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Clustering-the-UCSD-Campus">Clustering the UCSD Campus<a class="anchor-link" href="#Clustering-the-UCSD-Campus">&#182;</a></h1><p>The University of California At San Diego has a very unique campus environment for its undergraduate students. The entire campus and undergraduate student population are currently divided into six residential colleges. When a student is admitted into UCSD, they are assigned to one of the 6 colleges, and that determines where they live, what general education classes they have to take, and what resources are available to them. These colleges are vital to UCSD's unique campus culture, which is what makes the UCSD campus, the perfect clustering problem. For this problem, I have decided to implement the unsupervised k-means algorithm to seperate the campus into 9 clusters intended to be: Sixth College, Marshall College, Warren College, Muir College, Elanor Roosevelt College, Revelle College, center of campus, the school of medicine, and the medical campus.</p>
+<h1 id="Clustering-the-UCSD-Campus">Clustering the UCSD Campus<a class="anchor-link" href="#Clustering-the-UCSD-Campus">&#182;</a></h1><p>The University of California At San Diego has a very unique campus environment for its undergraduate students. The entire campus and undergraduate student population are currently divided into six residential colleges. When a student is admitted into UCSD, they are assigned to one of the 6 colleges, and that determines where they live, what general education classes they have to take, and what resources are available to them. These colleges are vital to UCSD's unique campus culture, which is what makes the UCSD campus, the perfect clustering problem. For this problem, I have decided to implement the unsupervised k-means algorithm to separate the campus into 9 clusters intended to be: Sixth College, Marshall College, Warren College, Muir College, Elanor Roosevelt College, Revelle College, the center of campus, the school of medicine, and the medical campus.</p>
 
 </div>
 </div>
@@ -11802,7 +11802,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Data-Wrangling">Data Wrangling<a class="anchor-link" href="#Data-Wrangling">&#182;</a></h2><p>In order to cluster the campus, we must first gather a dataset of names of places on campus and their locations. To do this I have decided to use the Google Maps Places API and the Python client library for it. I first create a list of location categories that would be relevant to the UCSD campus. Then I search for each of those categories of locations one by one in the proximity of the campus and save the results to a list.</p>
+<h2 id="Data-Wrangling">Data Wrangling<a class="anchor-link" href="#Data-Wrangling">&#182;</a></h2><p>In order to cluster the campus, I need to first gather a dataset of names of places on campus and their locations. To do this, I have decided to use the Google Maps Places API and the Python client library for it. I first create a list of location categories that would be relevant to the UCSD campus. Then I search for each of those categories of locations one by one in the proximity of the campus and save the results to a list.</p>
 
 </div>
 </div>
@@ -12422,6 +12422,16 @@ Type Ctrl-C to exit.
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><img src="map.png"></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Conclusion">Conclusion<a class="anchor-link" href="#Conclusion">&#182;</a></h1><p>The K-means algorithm, unfortunately, is not a very sophisticated clustering algorithm compared to industry standard solutions like dbscan and gaussian mixture models. Because of how the algorithm starts by picking random locations, that randomness makes each runtime of the algorithm return different clustering results. Above is a screenshot of one particular runtime that performed very well, while at the same time highlighting reasoning for the algorithm's results. The algorithm was able to autonomously separate the campus by all the subdivisions mentioned in the introduction except for Sixth College and The School of Medicine. This was largely a result of Google Maps lacking a lot of data on the residential areas of Sixth College so it was difficult for the algorithm to identify it as a cluster. Because of that Sixth College and half of The School of Medicine were classified as a single cluster, and the other half of the School of Medicine was its own cluster.</p>
+<p>Despite the inconsistent results of the k-means clustering approach, the UCSD campus was still a great clustering dataset problem. I will revisit this problem in the future, but when I do I plan on doing 2 things to improve success: collect a more detailed dataset, and implement a more sophisticated clustering algorithm</p>
 
 </div>
 </div>
